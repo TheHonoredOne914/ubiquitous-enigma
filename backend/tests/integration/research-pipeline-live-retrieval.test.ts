@@ -11,7 +11,7 @@ test("live retrieval path returns SourceGapReport when no search keys exist", as
   const result = await runResearchPipeline({
     requestId: "live-gap",
     userQuery: "India democratic space 2022-2025",
-    mode: "phd_level",
+    mode: "deep_research",
     liveRetrieval: true,
     allowMockRetrieval: false,
     allowSyntheticSourceUsage: false,
@@ -37,7 +37,7 @@ test("source gap path surfaces provider failure unless fallback is explicit", as
   await assert.rejects(() => runResearchPipeline({
     requestId: "live-gap-provider-failure",
     userQuery: "India democratic space 2022-2025 press freedom",
-    mode: "phd_level",
+    mode: "deep_research",
     liveRetrieval: true,
     allowMockRetrieval: false,
     allowSyntheticSourceUsage: false,

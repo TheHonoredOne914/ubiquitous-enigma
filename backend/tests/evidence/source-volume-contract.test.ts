@@ -8,7 +8,7 @@ import { buildClaimLedger, type ClaimLedger } from "../../src/core/evidence/clai
 import { buildEvidencePacks, buildModelEvidencePack } from "../../src/core/evidence/evidence-pack-builder.js";
 import { runThesisQualityGate } from "../../src/core/verification/thesis-quality-gate.js";
 
-test("phd_level mode gives every model role at least 30 EvidenceCards", () => {
+test("deep_research mode gives every model role at least 30 EvidenceCards", () => {
   const contract = buildAgendaContract({ originalUserQuery: "India democratic space 2022 2025 Freedom House V-Dem EIU UAPA FCRA Supreme Court ECI RSF HRW Amnesty CIVICUS EPW" });
   const registry = buildEvidenceRegistryFromSources(fixtureSources as any, contract);
   const packs = buildEvidencePacks(registry, contract);

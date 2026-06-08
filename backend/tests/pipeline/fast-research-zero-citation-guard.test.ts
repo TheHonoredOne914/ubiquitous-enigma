@@ -96,11 +96,11 @@ describe("Fast Research Zero-Citation Guard", () => {
     });
 
     it("should enforce the hard rule across all research modes", () => {
-      const modes: Array<"fast_research" | "deep_research" | "phd_level" | "fullspectrum"> = [
+      const modes: Array<"fast_research" | "deep_research" | "deep_research" | "council"> = [
         "fast_research",
         "deep_research",
-        "phd_level",
-        "fullspectrum",
+        "deep_research",
+        "council",
       ];
 
       for (const mode of modes) {

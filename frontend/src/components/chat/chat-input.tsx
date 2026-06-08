@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-export type ChatInputMode = "normal" | "fast_research" | "deep_research" | "phd_level" | "fullspectrum";
+export type ChatInputMode = "normal" | "fast_research" | "deep_research";
 
 interface ChatInputProps {
   value?: string;
@@ -17,10 +17,8 @@ interface ChatInputProps {
 
 const MODES: Array<{ mode: ChatInputMode; label: string; icon: LucideIcon; title: string }> = [
   { mode: "normal", label: "Draft", icon: MessageSquare, title: "Normal drafting" },
-  { mode: "fast_research", label: "Fast", icon: Gauge, title: "Quick committee prep, 10-15 cited source target" },
-  { mode: "deep_research", label: "Deep", icon: Search, title: "Serious prep, 20-30 cited source target" },
-  { mode: "phd_level", label: "PhD", icon: FlaskConical, title: "Thesis-level research, 30+ unique cited sources when available" },
-  { mode: "fullspectrum", label: "FullSpectrum", icon: Layers, title: "Maximum depth with strict bucket and quality gates" },
+  { mode: "fast_research", label: "Fast", icon: Gauge, title: "Quick committee prep, 40+ cited source target" },
+  { mode: "deep_research", label: "Deep", icon: Search, title: "Serious prep, 80+ cited source target" },
 ];
 
 export function ChatInput({ value = "", onChange, onSend, mode, setMode, selectedModels, disabled = false }: ChatInputProps) {

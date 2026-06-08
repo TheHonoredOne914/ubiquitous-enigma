@@ -62,7 +62,7 @@ test("strict phd route fails honestly when source usage cannot be proven", async
   try {
     await assert.rejects(() => runResearchPipeline({
       userQuery: "PhD level India parliament",
-      mode: "phd_level",
+      mode: "deep_research",
       preloadedSources: sources(5, false),
       liveRetrieval: false,
       useCoreGeneration: false,

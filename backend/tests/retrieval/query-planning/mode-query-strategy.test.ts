@@ -7,10 +7,10 @@ import { buildBucketedQueryPlan } from "../../../src/core/retrieval/query-planne
 test("fast and phd modes produce different query text, counts, and strategy sources", () => {
   const contract = buildAgendaContract({
     originalUserQuery: "ONDC digital commerce regulation in Indian Parliament",
-    outputDepth: "phd_level",
+    outputDepth: "deep_research",
   });
   const fast = buildBucketedQueryPlan(contract, "fast_research");
-  const phd = buildBucketedQueryPlan(contract, "phd_level");
+  const phd = buildBucketedQueryPlan(contract, "deep_research");
 
   assert.ok(fast.queries.length < phd.queries.length);
   assert.notDeepEqual(fast.queries.map((query) => query.query), phd.queries.map((query) => query.query).slice(0, fast.queries.length));
@@ -21,12 +21,12 @@ test("fast and phd modes produce different query text, counts, and strategy sour
 test("research modes add qualitatively different query text families", () => {
   const contract = buildAgendaContract({
     originalUserQuery: "ONDC digital commerce regulation in Indian Parliament",
-    outputDepth: "phd_level",
+    outputDepth: "deep_research",
   });
   const fastText = allQueryText(buildBucketedQueryPlan(contract, "fast_research"));
   const deepText = allQueryText(buildBucketedQueryPlan(contract, "deep_research"));
-  const phdText = allQueryText(buildBucketedQueryPlan(contract, "phd_level"));
-  const fullText = allQueryText(buildBucketedQueryPlan(contract, "fullspectrum"));
+  const phdText = allQueryText(buildBucketedQueryPlan(contract, "deep_research"));
+  const fullText = allQueryText(buildBucketedQueryPlan(contract, "council"));
 
   assert.match(fastText, /policy overview/i);
   assert.match(deepText, /recent developments|key arguments/i);
@@ -35,12 +35,12 @@ test("research modes add qualitatively different query text families", () => {
   assert.doesNotMatch(fastText, /scholarly analysis|Treasury Bench Opposition counterarguments/i);
 });
 
-test("fullspectrum adds timeline, counterargument, and comparative strategies", () => {
+test("council adds timeline, counterargument, and comparative strategies", () => {
   const contract = buildAgendaContract({
     originalUserQuery: "DPDP Act, digital rights, and AI governance in India",
-    outputDepth: "phd_level",
+    outputDepth: "deep_research",
   });
-  const plan = buildBucketedQueryPlan(contract, "fullspectrum");
+  const plan = buildBucketedQueryPlan(contract, "council");
   const strategies = new Set(plan.queries.map((query) => query.strategy).filter(Boolean));
 
   assert.ok(strategies.has("timeline"));

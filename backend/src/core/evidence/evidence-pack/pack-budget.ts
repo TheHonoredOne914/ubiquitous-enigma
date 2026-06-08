@@ -6,8 +6,6 @@ export function packCardLimit(contract: AgendaContract, mode: ResearchMode | und
   if (mode === "fast_research") return Math.max(40, contract.minimumEvidenceCardsPerModel);
   if (mode === "deep_research") return Math.max(80, contract.minimumEvidenceCardsPerModel);
   if (mode === "council") return Math.min(16, Math.max(10, contract.minimumEvidenceCardsPerModel));
-  if (mode === "phd_level") return Math.max(30, contract.minimumEvidenceCardsPerModel);
-  if (mode === "fullspectrum") return Math.max(34, contract.minimumEvidenceCardsPerModel);
   return Math.min(18, Math.max(10, contract.minimumEvidenceCardsPerModel));
 }
 
@@ -16,7 +14,5 @@ export function namedPackLimit(mode: ResearchMode | undefined, override?: number
   if (mode === "fast_research") return 40;
   if (mode === "deep_research") return 80;
   if (mode === "council") return 12;
-  if (mode === "phd_level") return 24;
-  if (mode === "fullspectrum") return 28;
   return 15;
 }

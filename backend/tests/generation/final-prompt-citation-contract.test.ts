@@ -120,7 +120,7 @@ Facts: Policy announcement regarding election commission`;
       const modes = {
         fast_research: 3,
         deep_research: 5,
-        phd_level: 8,
+        deep_research: 8,
       };
 
       for (const [mode, minimum] of Object.entries(modes)) {

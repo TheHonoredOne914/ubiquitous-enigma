@@ -73,7 +73,7 @@ test("core generator repairs thin final source selection before generation", asy
   const result = await generateCoreResearchAnswer({
     requestId: "thin-citations",
     userQuery: agendaContract.originalUserQuery,
-    mode: "phd_level",
+    mode: "deep_research",
     agendaContract,
     evidenceRegistry,
     evidencePacks,
@@ -102,7 +102,7 @@ test("core generator passes with 30 unique cited sources across 9 buckets", asyn
   const result = await generateCoreResearchAnswer({
     requestId: "strong-citations",
     userQuery: agendaContract.originalUserQuery,
-    mode: "phd_level",
+    mode: "deep_research",
     agendaContract,
     evidenceRegistry,
     evidencePacks,

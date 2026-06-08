@@ -2,7 +2,7 @@ import { buildAgendaContract, type AgendaContract } from "../../../src/core/agen
 import { EvidenceRegistryCore, type EvidenceSourceInput, type EvidenceSource } from "../../../src/core/evidence/evidence-registry.js";
 
 export function testContract(query = "AIPPM debate on electoral bonds, Article 19, Election Commission accountability, and Union ministry transparency"): AgendaContract {
-  const contract = buildAgendaContract({ requestId: "brick-14-test", originalUserQuery: query, outputDepth: "phd_level" });
+  const contract = buildAgendaContract({ requestId: "brick-14-test", originalUserQuery: query, outputDepth: "deep_research" });
   contract.minimumUniqueCitedSources = 8;
   contract.minimumEvidenceCardsPerModel = 8;
   return contract;

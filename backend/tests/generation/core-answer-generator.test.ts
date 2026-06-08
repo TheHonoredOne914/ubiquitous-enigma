@@ -8,7 +8,7 @@ test("core pipeline produces final answer without legacy fallback by default", a
   const result = await runResearchPipeline({
     requestId: "core-default",
     userQuery: "India democratic space 2022-2025 with press freedom, UAPA, FCRA, ECI, Supreme Court and civil liberties",
-    mode: "phd_level",
+    mode: "deep_research",
     preloadedSources: fixtureSources as any,
     emit: (event) => events.push(event.type),
   });
@@ -27,7 +27,7 @@ test("legacy fallback is used only when core generation fails and still runs val
   const result = await runResearchPipeline({
     requestId: "core-forced-fail",
     userQuery: "India democratic space 2022-2025",
-    mode: "phd_level",
+    mode: "deep_research",
     preloadedSources: fixtureSources as any,
     forceCoreGenerationFailure: true,
     legacyFallback: async ({ evidenceRegistry }) => `# Executive Thesis\nFallback answer with Indian Parliament framing, Treasury Bench, Opposition, POI, rebuttal, motion, amendment, central contradiction and strategic synthesis. ${Array.from({ length: 30 }, (_, index) => evidenceRegistry.getCitationMarkdown(index + 1)).join(" ")}`,

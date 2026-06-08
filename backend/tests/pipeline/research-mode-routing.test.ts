@@ -19,13 +19,13 @@ test("direct fast_research pipeline triggers live retrieval by default", async (
   assert.ok(result.evidenceRegistry.sources.length > 0);
 });
 
-test("phd_level is not downgraded to deep_research", async () => {
+test("deep_research is not downgraded to deep_research", async () => {
   const modes: string[] = [];
 
   await runResearchPipeline({
     requestId: "phd-routing",
     userQuery: "Article 356 and federalism in India",
-    mode: "phd_level",
+    mode: "deep_research",
     allowMockRetrieval: true,
     generationMode: "deterministic",
     allowSyntheticSourceUsage: true,
@@ -35,5 +35,5 @@ test("phd_level is not downgraded to deep_research", async () => {
   }).catch(() => undefined);
 
   assert.ok(modes.length > 0);
-  assert.equal(modes.every((mode) => mode === "phd_level"), true);
+  assert.equal(modes.every((mode) => mode === "deep_research"), true);
 });

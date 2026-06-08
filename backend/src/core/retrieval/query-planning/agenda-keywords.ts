@@ -4,7 +4,7 @@ const PROMPT_WORDS = new Set([
   "analyze", "analysis", "prepare", "write", "generate", "brief", "research", "make", "give",
   "sources", "source", "using", "with", "from", "about", "into", "that", "this", "please",
   "arguments", "argument", "style", "deep", "level", "detailed", "quick", "latest",
-  "fast", "phd", "fullspectrum", "mock", "parliamentary", "debate", "aippm",
+  "fast", "mock", "parliamentary", "debate", "aippm",
   "treasury", "bench", "opposition", "produce", "least", "words", "word", "use", "pois",
   "rebuttals", "motions", "amendments", "recommendations", "retrieved", "cite",
   "only", "final", "answer", "should",
@@ -89,7 +89,7 @@ function topicTextForSearch(agenda: string): string {
   const explicitQuestion = normalized.match(/\b(?:should|whether|how should|to what extent)\b[^?]{20,260}\?/i)?.[0];
   const subject = explicitQuestion ?? normalized;
   return subject
-    .replace(/^\s*(?:fast|deep|phd|fullspectrum)?\s*research\s+(?:for|on)\s+(?:an?\s+)?(?:aippm|lok sabha|rajya sabha|vidhan sabha|mock parliament|indian mock parliament)?\s*(?:debate)?\s*(?:in\s+india)?\s*:?\s*/i, "")
+    .replace(/^\s*(?:fast|deep)?\s*research\s+(?:for|on)\s+(?:an?\s+)?(?:aippm|lok sabha|rajya sabha|vidhan sabha|mock parliament|indian mock parliament)?\s*(?:debate)?\s*(?:in\s+india)?\s*:?\s*/i, "")
     .replace(/\bproduce\s+at\s+least\b.*$/i, "")
     .replace(/\buse\s+indian\s+parliamentary\s+framing\b.*$/i, "")
     .replace(/\bwith\s+treasury\s+bench\b.*$/i, "")

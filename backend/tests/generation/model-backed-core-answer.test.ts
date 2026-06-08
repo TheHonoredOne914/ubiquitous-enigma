@@ -10,7 +10,7 @@ import { generateCoreResearchAnswer } from "../../src/core/generation/core-answe
 import type { ProviderRouter } from "../../src/core/providers/provider-router.js";
 
 test("model-backed core answer path calls provider and validates registry citations", async () => {
-  const agendaContract = buildAgendaContract({ requestId: "model-backed-core", originalUserQuery: "India democratic space 2022-2025 Freedom House V-Dem ECI Supreme Court RSF", outputDepth: "phd_level" });
+  const agendaContract = buildAgendaContract({ requestId: "model-backed-core", originalUserQuery: "India democratic space 2022-2025 Freedom House V-Dem ECI Supreme Court RSF", outputDepth: "deep_research" });
   const evidenceRegistry = buildEvidenceRegistryFromSources(fixtureSources as any, agendaContract);
   const evidencePacks = Object.values(buildEvidencePacks(evidenceRegistry, agendaContract));
   const claimGraph = buildClaimGraph(evidenceRegistry, agendaContract);
@@ -30,7 +30,7 @@ test("model-backed core answer path calls provider and validates registry citati
   const result = await generateCoreResearchAnswer({
     requestId: "model-backed-core",
     userQuery: agendaContract.originalUserQuery,
-    mode: "phd_level",
+    mode: "deep_research",
     agendaContract,
     evidenceRegistry,
     evidencePacks,

@@ -6,7 +6,7 @@ import { classifyProviderError } from "../../src/core/search/search-provider-err
 import { withEnrichmentBudget } from "../../src/core/retrieval/bucketed-retrieval.js";
 
 test("enrichment capacity >= maxSourcesToEnrich for all modes", () => {
-  const modes: ResearchMode[] = ["fast_research", "deep_research", "phd_level", "fullspectrum"];
+  const modes: ResearchMode[] = ["fast_research", "deep_research", "deep_research", "council"];
 
   for (const mode of modes) {
     const limits = RESEARCH_LIMITS[mode];
@@ -25,16 +25,16 @@ test("enrichment capacity >= maxSourcesToEnrich for all modes", () => {
 test("extractionTimeoutMs is properly set for all modes", () => {
   assert.equal(createLatencyBudget("fast_research").extractionTimeoutMs, 6000);
   assert.equal(createLatencyBudget("deep_research").extractionTimeoutMs, 8000);
-  assert.equal(createLatencyBudget("phd_level").extractionTimeoutMs, 10000);
-  assert.equal(createLatencyBudget("fullspectrum").extractionTimeoutMs, 12000);
+  assert.equal(createLatencyBudget("deep_research").extractionTimeoutMs, 10000);
+  assert.equal(createLatencyBudget("council").extractionTimeoutMs, 12000);
 });
 
 test("enrichment budget is reconciled between research-mode.ts and latency-budget.ts", () => {
   // The enrichmentBudgetMs should be consistent
   assert.equal(RESEARCH_LIMITS.fast_research.enrichmentBudgetMs, createLatencyBudget("fast_research").enrichmentBudgetMs);
   assert.equal(RESEARCH_LIMITS.deep_research.enrichmentBudgetMs, createLatencyBudget("deep_research").enrichmentBudgetMs);
-  assert.equal(RESEARCH_LIMITS.phd_level.enrichmentBudgetMs, createLatencyBudget("phd_level").enrichmentBudgetMs);
-  assert.equal(RESEARCH_LIMITS.fullspectrum.enrichmentBudgetMs, createLatencyBudget("fullspectrum").enrichmentBudgetMs);
+  assert.equal(RESEARCH_LIMITS.deep_research.enrichmentBudgetMs, createLatencyBudget("deep_research").enrichmentBudgetMs);
+  assert.equal(RESEARCH_LIMITS.council.enrichmentBudgetMs, createLatencyBudget("council").enrichmentBudgetMs);
 });
 
 test("classifyProviderError distinguishes budget abort from per-call timeout", () => {

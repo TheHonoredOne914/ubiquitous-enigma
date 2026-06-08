@@ -776,10 +776,10 @@ const SendAnthropicMessageParams = z.object({ id: z.number().int().positive() })
 const ListAnthropicConversationsQuery = z.object({
   archiveId: z.coerce.number().int().positive().optional(),
 });
-const ResearchModeSchema = z.enum(["fast_research", "deep_research", "phd_level", "fullspectrum", "council"]);
+const ResearchModeSchema = z.enum(["fast_research", "deep_research", "council"]);
 const SendAnthropicMessageBody = z.object({
   content:       z.string().min(1),
-  mode:          z.enum(["normal", "web_search", "deep_research", "rhetorics", "drafting", "fast_research", "phd_level", "fullspectrum", "council"]).optional(),
+  mode:          z.enum(["normal", "web_search", "deep_research", "rhetorics", "drafting", "fast_research", "council"]).optional(),
   researchMode:  ResearchModeSchema.optional(),
   rhetoricsType: z.enum(["kavita", "speech", "debate"]).optional(),
   creativity:    z.number().min(0).max(1).optional(),
@@ -1345,7 +1345,6 @@ function isResearchRouteMode(mode: string): boolean {
 function normalizeEffectiveResearchMode(userContent: string, mode: string, selected?: ResearchMode): ResearchMode {
   if (selected) return selected;
   if (mode === "fast_research" || mode === "deep_research" || mode === "council") return mode;
-  if (mode === "phd_level" || mode === "fullspectrum") return "deep_research";
   return inferResearchMode(userContent, mode === "web_search" ? "web_search" : "deep_research");
 }
 
@@ -4777,8 +4776,6 @@ router.post("/anthropic/conversations/:id/messages", async (req, res) => {
     web_search: 5 * 60 * 1000,
     deep_research: 15 * 60 * 1000,
     fast_research: 8 * 60 * 1000,
-    phd_level: 20 * 60 * 1000,
-    fullspectrum: 25 * 60 * 1000,
     council: 30 * 60 * 1000,
     rhetorics: 5 * 60 * 1000,
     drafting: 5 * 60 * 1000,

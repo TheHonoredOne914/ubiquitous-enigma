@@ -4,7 +4,7 @@ import { createProviderRunState } from "../../src/core/providers/provider-run-st
 import type { ResearchMode } from "../../src/core/config/research-mode.js";
 
 test("failure-count skip applies to all research modes, not only fast_research", () => {
-  const modes: ResearchMode[] = ["fast_research", "deep_research", "phd_level", "fullspectrum"];
+  const modes: ResearchMode[] = ["fast_research", "deep_research", "deep_research", "council"];
 
   for (const mode of modes) {
     const state = createProviderRunState(() => 1_000);
@@ -20,7 +20,7 @@ test("rate limits, oversized prompts, and repeated timeouts skip unsafe retries"
   const state = createProviderRunState(() => 5_000);
 
   state.recordFailure("openrouter", { code: "rate_limited", retryAfterMs: 30_000 }, { model: "free/model" });
-  assert.equal(state.shouldSkipProvider("openrouter", "core_generation", "fullspectrum"), true);
+  assert.equal(state.shouldSkipProvider("openrouter", "core_generation", "council"), true);
 
   state.recordFailure("groq", { code: "request_too_large", status: 413 }, {
     model: "llama-3.3-70b-versatile",

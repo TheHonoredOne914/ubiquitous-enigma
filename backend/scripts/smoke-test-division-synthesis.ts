@@ -5,7 +5,7 @@ import { decideFinalResearchStatus } from "../src/core/pipeline/final-status.js"
 
 const fixtureSources = JSON.parse(fs.readFileSync(new URL("../tests/fixtures/india-democracy-sources.json", import.meta.url), "utf8"));
 const events: string[] = [];
-const mode = "fullspectrum";
+const mode = "council";
 
 const result = await runResearchPipeline({
   requestId: "smoke-division-synthesis",

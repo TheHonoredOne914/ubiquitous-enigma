@@ -331,9 +331,7 @@ function resolveBudget(budget: EvidenceCompressionBudget): Required<Omit<Evidenc
     ? { maxCards: 10, maxCardChars: 850, maxPackChars: 9_000, maxClaims: 3, maxSnippets: 1 }
     : mode === "deep_research"
       ? { maxCards: 22, maxCardChars: 1_050, maxPackChars: 22_000, maxClaims: 4, maxSnippets: 2 }
-      : mode === "phd_level"
-        ? { maxCards: 34, maxCardChars: 1_200, maxPackChars: 34_000, maxClaims: 5, maxSnippets: 2 }
-        : { maxCards: 40, maxCardChars: 1_250, maxPackChars: 42_000, maxClaims: 5, maxSnippets: 2 };
+      : { maxCards: 40, maxCardChars: 1_250, maxPackChars: 42_000, maxClaims: 5, maxSnippets: 2 };
   return {
     mode,
     maxCards: budget.maxCards ?? defaults.maxCards,

@@ -24,9 +24,9 @@ test("generic Indian parliamentary prompt does not produce junk duplicated-year 
 test("topic words from a specific prompt appear in generated queries", () => {
   const contract = buildAgendaContract({
     originalUserQuery: "Analyze UAPA, FCRA, EVM VVPAT and electoral bonds for Indian Parliament from 2022-2025.",
-    outputDepth: "phd_level",
+    outputDepth: "deep_research",
   });
-  const queries = buildBucketedQueryPlan(contract, "phd_level").queries.map((item) => item.query);
+  const queries = buildBucketedQueryPlan(contract, "deep_research").queries.map((item) => item.query);
 
   assert.ok(queries.some((query) => /\bUAPA\b/i.test(query)));
   assert.ok(queries.some((query) => /\bFCRA\b/i.test(query)));

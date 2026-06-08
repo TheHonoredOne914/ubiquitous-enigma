@@ -7,7 +7,7 @@ test("live mode disables synthetic SourceUsageMap when model role provider is ab
   const result = await runResearchPipeline({
     requestId: "source-usage-live",
     userQuery: "India democratic space 2022-2025",
-    mode: "phd_level",
+    mode: "deep_research",
     liveRetrieval: true,
     allowMockRetrieval: false,
     allowSyntheticSourceUsage: false,

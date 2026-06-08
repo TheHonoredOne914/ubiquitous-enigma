@@ -8,8 +8,8 @@ test("fast and web research use Serper then Exa before Tavily fallback", () => {
 });
 
 test("deep and strict research combine Serper and Exa before fallback providers", () => {
-  assert.deepEqual(getSearchProviderOrder("phd_level", { serper: true, exa: true, tavily: true }), ["serper", "exa", "tavily"]);
-  assert.deepEqual(getSearchProviderOrder("fullspectrum", { exa: true, tavily: true }), ["exa", "tavily"]);
+  assert.deepEqual(getSearchProviderOrder("deep_research", { serper: true, exa: true, tavily: true }), ["serper", "exa", "tavily"]);
+  assert.deepEqual(getSearchProviderOrder("council", { exa: true, tavily: true }), ["exa", "tavily"]);
 });
 
 test("extraction prefers Firecrawl then Jina then snippet fallback", () => {

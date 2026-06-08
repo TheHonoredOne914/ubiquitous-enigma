@@ -1,4 +1,4 @@
-export type ResearchMode = "fast_research" | "deep_research" | "phd_level" | "fullspectrum" | "council";
+export type ResearchMode = "fast_research" | "deep_research" | "council";
 export type ChatMode = "normal" | ResearchMode;
 export type ChatType = "research" | "rhetorics";
 export type RhetoricsType = "kavita" | "speech" | "debate";

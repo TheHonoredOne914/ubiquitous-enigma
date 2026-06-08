@@ -122,7 +122,7 @@ export interface CoreQualityGateStatus {
   warnings: string[];
 }
 
-export type ResearchModeStatus = "fast_research" | "deep_research" | "phd_level" | "fullspectrum" | "council";
+export type ResearchModeStatus = "fast_research" | "deep_research" | "deep_research" | "council" | "council";
 export type PipelineRunStatus =
   | "idle"
   | "running"

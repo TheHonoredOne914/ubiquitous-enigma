@@ -9,7 +9,7 @@ test("run-scoped events require run and assistant identity", () => {
     requestId: "req_A",
     conversationId: 12,
     assistantMessageId: 101,
-    researchMode: "fullspectrum" as const,
+    researchMode: "council" as const,
     eventType: "answer_delta",
     content: "Prompt A content",
   };
@@ -18,7 +18,7 @@ test("run-scoped events require run and assistant identity", () => {
     requestId: "req_B",
     conversationId: 12,
     assistantMessageId: 102,
-    researchMode: "fullspectrum" as const,
+    researchMode: "council" as const,
     eventType: "answer_delta",
     content: "Prompt B content",
   };

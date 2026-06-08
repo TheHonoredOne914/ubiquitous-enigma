@@ -55,7 +55,7 @@ export interface AgendaContract {
   forbiddenDriftTerms: string[];
   mustNotClaimWithoutEvidence: string[];
   requiredSourceBuckets: SourceBucketRequirement[];
-  outputDepth: "brief" | "detailed" | "phd_level";
+  outputDepth: "brief" | "detailed";
   evidenceStandard: "normal" | "advanced" | "thesis";
   debateMode: "indian_parliamentary" | "generic";
   minimumUniqueCitedSources: number;
@@ -182,7 +182,7 @@ export function buildAgendaContract(input: BuildAgendaContractInput): AgendaCont
         "comparative_democracy",
         "parliamentary_records",
       ].map((bucketId) => ({ bucketId, required: true })),
-      outputDepth: input.outputDepth ?? "phd_level",
+      outputDepth: input.outputDepth ?? "detailed",
       evidenceStandard: "thesis",
       debateMode: "indian_parliamentary",
       minimumUniqueCitedSources: 30,
@@ -204,10 +204,10 @@ export function buildAgendaContract(input: BuildAgendaContractInput): AgendaCont
     mustNotClaimWithoutEvidence: ["statistics", "legal holding", "electoral fraud allegation"],
     requiredSourceBuckets: [],
     outputDepth: input.outputDepth ?? "detailed",
-    evidenceStandard: input.outputDepth === "phd_level" ? "thesis" : "advanced",
+    evidenceStandard: "advanced",
     debateMode: isUnExplicit ? "generic" : "indian_parliamentary",
-    minimumUniqueCitedSources: input.outputDepth === "phd_level" ? 30 : 10,
-    minimumEvidenceCardsPerModel: input.outputDepth === "phd_level" ? 30 : 10,
+    minimumUniqueCitedSources: 10,
+    minimumEvidenceCardsPerModel: 10,
   };
 }
 

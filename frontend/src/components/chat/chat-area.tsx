@@ -609,22 +609,6 @@ export function ChatArea({
       ring: "ring-blue-400",
       hex: "#3b6fd4",
     },
-    phd_level: {
-      label: "PhD Research", icon: FlaskConical,
-      color: "text-[#d4a03b]",
-      bg: "bg-[#d4a03b18]",
-      border: "border-[#d4a03b30]",
-      ring: "ring-amber-400",
-      hex: "#d4a03b",
-    },
-    fullspectrum: {
-      label: "FullSpectrum", icon: Layers,
-      color: "text-[#ef4444]",
-      bg: "bg-[#ef444418]",
-      border: "border-[#ef444430]",
-      ring: "ring-red-400",
-      hex: "#ef4444",
-    },
     council: {
       label: "Council", icon: Users,
       color: "text-[#d4a03b]",

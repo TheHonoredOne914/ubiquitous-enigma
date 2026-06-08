@@ -38,7 +38,7 @@ test("model path calls provider router and validates registry citations", async 
   const result = await generateCoreResearchAnswer({
     requestId: "model-path",
     userQuery: agendaContract.originalUserQuery,
-    mode: "phd_level",
+    mode: "deep_research",
     agendaContract,
     evidenceRegistry,
     evidencePacks,
@@ -68,7 +68,7 @@ test("fake citations and UN-style model answer are replaced by cited determinist
   const result = await generateCoreResearchAnswer({
     requestId: "bad-model-path",
     userQuery: agendaContract.originalUserQuery,
-    mode: "phd_level",
+    mode: "deep_research",
     agendaContract,
     evidenceRegistry,
     evidencePacks,
@@ -91,7 +91,7 @@ test("core answer prompt includes EvidenceRegistry source contract and SourceGap
   const prompt = buildCoreAnswerUserPrompt({
     requestId: "prompt",
     userQuery: agendaContract.originalUserQuery,
-    mode: "phd_level",
+    mode: "deep_research",
     agendaContract,
     evidenceRegistry,
     evidencePacks,

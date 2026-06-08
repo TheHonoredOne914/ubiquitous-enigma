@@ -23,22 +23,10 @@ const BUDGET_BY_MODE: Record<string, CitationBudget> = {
     maxSourcesPerDivision: 5,
     targetUniqueSourcesTotal: 20,
   },
-  phd_level: {
-    minUniqueSources: 20,
-    maxSourcesPerSection: 5,
-    maxSourcesPerDivision: 6,
-    targetUniqueSourcesTotal: 30,
-  },
-  fullspectrum: {
-    minUniqueSources: 20,
-    maxSourcesPerSection: 6,
-    maxSourcesPerDivision: 6,
-    targetUniqueSourcesTotal: 30,
-  },
 };
 
 export function getCitationBudget(mode: string): CitationBudget {
-  return BUDGET_BY_MODE[mode] ?? BUDGET_BY_MODE.standard_research;
+  return BUDGET_BY_MODE[mode] ?? BUDGET_BY_MODE.fast_research;
 }
 
 /**

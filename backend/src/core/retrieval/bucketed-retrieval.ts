@@ -188,7 +188,7 @@ export async function runBucketedRetrieval(plan: BucketedQueryPlan, options: Buc
   }
 
   // Multi-hop expansion: case/index/entity/contrarian query expansion.
-  // Originally gated to phd_level/fullspectrum only, which left deep_research
+  // Originally gated to deep_research/council only, which left fast_research
   // with no recovery path beyond contextual bucket top-up when buckets came
   // back weak. Per LOVABLE_RESEARCH_MODE_REQUIREMENTS_AND_FIX_BRIEF.md
   // §"Deep Research" + §"Retrieval and Search", deep must consistently hit

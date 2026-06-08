@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { evaluateSourceContract } from "../../src/core/evidence/source-contract.js";
 import { decideFinalResearchStatus } from "../../src/core/pipeline/final-status.js";
 
-test("phd_level with substantial evidence and SourceGapReport becomes completed_with_source_gaps, not empty failure", () => {
+test("deep_research with substantial evidence and SourceGapReport becomes completed_with_source_gaps, not empty failure", () => {
   const sourceContract = evaluateSourceContract({
-    mode: "phd_level",
+    mode: "deep_research",
     requiredSources: 20,
     citationEligibleSources: 19,
     finalUniqueCitedSources: 19,
@@ -14,7 +14,7 @@ test("phd_level with substantial evidence and SourceGapReport becomes completed_
 
   assert.equal(sourceContract.status, "passed_with_source_gaps");
   assert.equal(decideFinalResearchStatus({
-    mode: "phd_level",
+    mode: "deep_research",
     coreGenerationUsed: true,
     legacyFallbackUsed: false,
     sourceContract,
@@ -26,7 +26,7 @@ test("phd_level with substantial evidence and SourceGapReport becomes completed_
 
 test("zero or near-zero strict evidence remains failed", () => {
   const sourceContract = evaluateSourceContract({
-    mode: "fullspectrum",
+    mode: "council",
     requiredSources: 30,
     citationEligibleSources: 1,
     finalUniqueCitedSources: 1,

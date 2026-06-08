@@ -11,7 +11,7 @@ test("buildAgendaContract locks India democratic-space agenda to Indian Mock Par
   assert.equal(contract.topicType, "indian_democratic_space");
   assert.equal(contract.countryFocus, "India");
   assert.deepEqual(contract.temporalScope, { startYear: 2022, endYear: 2025, explicit: true });
-  assert.equal(contract.outputDepth, "phd_level");
+  assert.equal(contract.outputDepth, "deep_research");
   assert.equal(contract.evidenceStandard, "thesis");
   assert.equal(contract.debateMode, "indian_parliamentary");
   assert.equal(contract.minimumUniqueCitedSources, 30);

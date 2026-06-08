@@ -38,7 +38,7 @@ async function run(providerName: "nvidia" | "github", model: string) {
   await generateCoreResearchAnswer({
     requestId: `${providerName}-generation`,
     userQuery: agendaContract.originalUserQuery,
-    mode: providerName === "github" ? "fast_research" : "phd_level",
+    mode: providerName === "github" ? "fast_research" : "deep_research",
     agendaContract,
     evidenceRegistry,
     evidencePacks,

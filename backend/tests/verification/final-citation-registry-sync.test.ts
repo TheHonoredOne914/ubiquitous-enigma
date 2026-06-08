@@ -6,7 +6,7 @@ import { buildEvidenceRegistryFromSources } from "../../src/core/evidence/eviden
 import { validateCitations } from "../../src/core/verification/citation-validator.js";
 
 test("final citation status maps linked citations back to EvidenceRegistry sources", () => {
-  const contract = buildAgendaContract({ requestId: "citation-sync", originalUserQuery: "India democratic space 2022-2025", outputDepth: "phd_level" });
+  const contract = buildAgendaContract({ requestId: "citation-sync", originalUserQuery: "India democratic space 2022-2025", outputDepth: "deep_research" });
   const registry = buildEvidenceRegistryFromSources(fixtureSources as any, contract);
   const text = registry.getCitationEligibleSources().slice(0, 30).map((source) => registry.getCitationMarkdown(source.id)).join(" ");
   const report = validateCitations(text, registry, contract);

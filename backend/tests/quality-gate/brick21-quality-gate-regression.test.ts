@@ -36,8 +36,8 @@ The election was rigged and EVMs were compromised as established fact. Article 9
 });
 
 test("BUG-21-01: fake citation-looking text fails when final claims lack ClaimGraph or ClaimLedger support", () => {
-  const { contract, registry, input } = createQualityGateHarnessFixture({ mode: "phd_level" });
-  const text = `${buildPassingAnswer(registry, "phd_level")}
+  const { contract, registry, input } = createQualityGateHarnessFixture({ mode: "deep_research" });
+  const text = `${buildPassingAnswer(registry, "deep_research")}
 
 ## Unsupported Claim
 India secretly invalidated forty million votes in 2026 and every court confirmed the fraud. ${registry.getCitationMarkdown(1)}`;
@@ -52,12 +52,12 @@ India secretly invalidated forty million votes in 2026 and every court confirmed
 });
 
 test("BUG-21-02 and BUG-21-21: empty D1-D6 and D8-D10 divisions fail with mode-aware division checks", () => {
-  const { contract, registry, input } = createQualityGateHarnessFixture({ mode: "phd_level" });
+  const { contract, registry, input } = createQualityGateHarnessFixture({ mode: "deep_research" });
   const divisionOutputs = new Map(input.divisionOutputs as any);
   for (const id of ["D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9", "D10"]) {
     divisionOutputs.set(id, "");
   }
-  const report = runThesisQualityGate(buildPassingAnswer(registry, "phd_level"), contract, registry, {
+  const report = runThesisQualityGate(buildPassingAnswer(registry, "deep_research"), contract, registry, {
     ...input,
     divisionOutputs,
   } as any);
@@ -93,12 +93,12 @@ test("BUG-21-06 and BUG-21-17: D11 keywords outside D11 do not satisfy strategic
   expectFatalIssue(report, "template_or_thin_d11");
 });
 
-test("BUG-21-07: fast_research and phd_level use different source-depth thresholds", () => {
+test("BUG-21-07: fast_research and deep_research use different source-depth thresholds", () => {
   const fast = createQualityGateHarnessFixture({ mode: "fast_research", sourceCount: 8 });
-  const phd = createQualityGateHarnessFixture({ mode: "phd_level", sourceCount: 8 });
+  const phd = createQualityGateHarnessFixture({ mode: "deep_research", sourceCount: 8 });
 
   expectGatePass(runThesisQualityGate(buildPassingAnswer(fast.registry, "fast_research"), fast.contract, fast.registry, fast.input));
-  const phdReport = runThesisQualityGate(buildPassingAnswer(phd.registry, "phd_level"), phd.contract, phd.registry, phd.input);
+  const phdReport = runThesisQualityGate(buildPassingAnswer(phd.registry, "deep_research"), phd.contract, phd.registry, phd.input);
   expectGateFail(phdReport, "BUG-21-07");
   expectFatalIssue(phdReport, "mode_depth");
 });
@@ -188,10 +188,10 @@ test("BUG-21-13: one parliamentary keyword in long output does not pass framing 
 
 test("BUG-21-14 and BUG-21-22: snippet-dominated or bucket-concentrated source sets fail source quality", () => {
   const snippet = createQualityGateHarnessFixture({ mode: "deep_research", snippetOnly: true });
-  const concentrated = createQualityGateHarnessFixture({ mode: "phd_level", concentratedBucket: true });
+  const concentrated = createQualityGateHarnessFixture({ mode: "deep_research", concentratedBucket: true });
 
   expectFatalIssue(runThesisQualityGate(buildPassingAnswer(snippet.registry), snippet.contract, snippet.registry, snippet.input), "source_quality");
-  expectFatalIssue(runThesisQualityGate(buildPassingAnswer(concentrated.registry, "phd_level"), concentrated.contract, concentrated.registry, concentrated.input), "bucket_concentration");
+  expectFatalIssue(runThesisQualityGate(buildPassingAnswer(concentrated.registry, "deep_research"), concentrated.contract, concentrated.registry, concentrated.input), "bucket_concentration");
 });
 
 test("BUG-21-15: legal accuracy does not get full score for keyword-only court/legal mentions", () => {

@@ -2,7 +2,7 @@ import "dotenv/config";
 import { getHealthyProvidersForResearch, type ProviderResearchStatus } from "../src/core/providers/provider-health.js";
 import { getSourceUsagePolicy } from "../src/core/config/source-usage-policy.js";
 
-type Mode = "normal" | "rhetorics" | "web_search" | "fast_research" | "deep_research" | "phd_level" | "fullspectrum";
+type Mode = "normal" | "rhetorics" | "web_search" | "fast_research" | "deep_research" | "deep_research" | "council";
 
 const requireLiveKeys = process.argv.includes("--require-live-keys");
 const modelKeys = {
@@ -53,7 +53,7 @@ if (missing.length) {
   console.log(`Missing keys: ${missing.join(", ")}`);
 }
 
-const modes: Mode[] = ["normal", "rhetorics", "web_search", "fast_research", "deep_research", "phd_level", "fullspectrum"];
+const modes: Mode[] = ["normal", "rhetorics", "web_search", "fast_research", "deep_research", "deep_research", "council"];
 for (const mode of modes) {
   if (mode === "normal" || mode === "rhetorics") {
     console.log(`${mode}: ${health.healthyProviders.length ? `ready via ${health.selectedProvider}/${health.selectedModel}` : "provider_config_error"}`);

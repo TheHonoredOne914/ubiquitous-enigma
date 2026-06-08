@@ -1137,7 +1137,7 @@ export function ResearchPipeline({
             statusLabel = `Reading (${fetchedCount}/${fetchingTotal})…`;
           } else if (data.searches.length > 0) {
             status = "searching";
-            const max = mode === "fullspectrum" ? 120 : mode === "phd_level" ? 100 : mode === "deep_research" ? 60 : 25;
+            const max = mode === "deep_research" ? 60 : 25;
             percent = Math.min(99, Math.round((data.searches.length / max) * 100));
             statusLabel = `Searching (${data.searches.length})…`;
           }

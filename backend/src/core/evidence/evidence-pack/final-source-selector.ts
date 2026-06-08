@@ -43,7 +43,7 @@ export function selectFinalSources(sources: EvidenceSource[], options: FinalSour
     domainSeen.set(domain, (domainSeen.get(domain) ?? 0) + 1);
   }
   const earlyCap = options.mode === "fast_research" ? 3 : 4;
-  const maxCap = options.mode === "fullspectrum" || options.mode === "phd_level" ? 5 : 4;
+  const maxCap = 4;
   const deferred: EvidenceSource[] = [];
 
   for (const source of ranked) {

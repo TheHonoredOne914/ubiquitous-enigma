@@ -18,8 +18,8 @@ test("fast and web research use webSearchModels", () => {
   }
 });
 
-test("deep, PhD, FullSpectrum, and Council use deepResearchModels", () => {
-  for (const mode of ["deep_research", "phd_level", "fullspectrum", "council"] as ChatMode[]) {
+test("deep and Council use deepResearchModels", () => {
+  for (const mode of ["deep_research", "council"] as ChatMode[]) {
     assert.deepEqual(getModelsForMode(mode, normalModel, webSearchModels, deepResearchModels), deepResearchModels);
     assert.equal(getPrimaryModelForMode(mode, normalModel, webSearchModels, deepResearchModels), deepResearchModels[0]);
   }

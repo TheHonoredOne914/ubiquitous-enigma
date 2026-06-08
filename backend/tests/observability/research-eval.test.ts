@@ -5,7 +5,7 @@ import { createResearchEvalRecord } from "../../src/services/research-eval.js";
 test("research eval records core/fallback usage and redacts provider errors", () => {
   const record = createResearchEvalRecord({
     requestId: "eval-1",
-    mode: "phd_level",
+    mode: "deep_research",
     agendaType: "indian_democratic_space",
     committeeType: "aippm",
     latencyMs: 1234,

@@ -4,7 +4,7 @@ import { shouldStopRetrievalEarly } from "../../src/core/retrieval/early-stoppin
 
 test("phd mode stops only after 40 eligible sources, 9 buckets, and realistic 30 citations", () => {
   const result = shouldStopRetrievalEarly({
-    mode: "phd_level",
+    mode: "deep_research",
     citationEligibleSources: 42,
     coveredBucketIds: ["democracy_index", "government_official", "court_legal", "human_rights_watchdog", "civic_space", "press_freedom", "digital_rights", "electoral_integrity", "academic_research"],
     finalCitationsRealistic: true,
@@ -16,7 +16,7 @@ test("phd mode stops only after 40 eligible sources, 9 buckets, and realistic 30
 
 test("phd mode does not stop when legal bucket is missing for a legal topic", () => {
   const result = shouldStopRetrievalEarly({
-    mode: "phd_level",
+    mode: "deep_research",
     citationEligibleSources: 80,
     coveredBucketIds: ["democracy_index", "government_official", "human_rights_watchdog", "civic_space", "press_freedom", "digital_rights", "electoral_integrity", "academic_research", "policy_research"],
     finalCitationsRealistic: true,

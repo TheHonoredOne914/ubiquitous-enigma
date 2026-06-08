@@ -3,10 +3,10 @@ import { buildBucketedQueryPlan } from "../src/core/retrieval/query-planner.js";
 import { runResearchPipeline } from "../src/core/pipeline/research-pipeline.js";
 
 const prompt = "Analyze India's declining democratic space from 2022-2025 using Freedom House, V-Dem, EIU, UAPA, FCRA, internet shutdowns, HRW, Amnesty, CIVICUS, Supreme Court responses, EVM/VVPAT allegations, electoral bonds, RSF, EPW, MHA, ECI, The Hindu, and Indian Express.";
-const mode = "fullspectrum" as const;
+const mode = "council" as const;
 const hasSearchKey = Boolean(process.env.TAVILY_API_KEY || process.env.BRAVE_API_KEY || process.env.SERPER_API_KEY);
 const hasModelKey = Boolean(process.env.GROQ_API_KEY || process.env.OPENROUTER_API_KEY || process.env.GEMINI_API_KEY);
-const contract = buildAgendaContract({ requestId: "smoke-democracy", originalUserQuery: prompt, outputDepth: "phd_level" });
+const contract = buildAgendaContract({ requestId: "smoke-democracy", originalUserQuery: prompt, outputDepth: "deep_research" });
 const plan = buildBucketedQueryPlan(contract, mode);
 const uniqueQueries = new Set(plan.queries.map((query) => query.query.toLowerCase()));
 const duplicateQueryRate = plan.queries.length ? Number(((plan.queries.length - uniqueQueries.size) / plan.queries.length).toFixed(3)) : 0;

@@ -4,8 +4,8 @@ import { createLatencyBudget } from "../../src/core/latency/latency-budget.js";
 
 test("latency budgets scale by research mode", () => {
   assert.equal(createLatencyBudget("fast_research").totalBudgetMs, 90_000);
-  assert.equal(createLatencyBudget("fullspectrum").providerCallTimeoutMs, 45_000);
-  assert.ok(createLatencyBudget("phd_level").sourceUsageBudgetMs > createLatencyBudget("fast_research").sourceUsageBudgetMs);
+  assert.equal(createLatencyBudget("council").providerCallTimeoutMs, 45_000);
+  assert.ok(createLatencyBudget("deep_research").sourceUsageBudgetMs > createLatencyBudget("fast_research").sourceUsageBudgetMs);
 });
 
 test("Council latency budget preserves 180-source enrichment capacity", () => {

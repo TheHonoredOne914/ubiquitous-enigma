@@ -217,8 +217,8 @@ test("source usage policy keeps web and fast lighter than phd/full", () => {
   assert.equal(getSourceUsagePolicy("web_search").requiredSources, 10);
   assert.equal(getSourceUsagePolicy("fast_research").strictFailure, false);
   assert.equal(getSourceUsagePolicy("deep_research").allowCompletedWithSourceGaps, true);
-  assert.equal(getSourceUsagePolicy("phd_level").strictFailure, true);
-  assert.equal(getSourceUsagePolicy("fullspectrum").minimumToProceed, 25);
+  assert.equal(getSourceUsagePolicy("deep_research").strictFailure, true);
+  assert.equal(getSourceUsagePolicy("council").minimumToProceed, 25);
 });
 
 test("fast research can complete with source gaps when source usage role fails", async () => {
@@ -355,7 +355,7 @@ test("phd level fails honestly when source usage cannot be proven", async () => 
   try {
     await assert.rejects(() => runResearchPipeline({
       userQuery: "PhD India parliament evidence",
-      mode: "phd_level",
+      mode: "deep_research",
       preloadedSources: sources,
       liveRetrieval: false,
       useCoreGeneration: false,

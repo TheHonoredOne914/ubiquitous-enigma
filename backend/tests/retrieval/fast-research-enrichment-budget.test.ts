@@ -199,13 +199,13 @@ describe("Fast Research Enrichment Budget", () => {
       const budgets = {
         fast_research: 20_000,
         deep_research: 60_000,
-        phd_level: 120_000,
-        fullspectrum: 150_000,
+        deep_research: 120_000,
+        council: 150_000,
       };
 
       expect(budgets.fast_research).toBe(20_000);
       expect(budgets.deep_research).toBeGreaterThan(budgets.fast_research);
-      expect(budgets.phd_level).toBeGreaterThan(budgets.deep_research);
+      expect(budgets.deep_research).toBeGreaterThan(budgets.deep_research);
     });
   });
 });

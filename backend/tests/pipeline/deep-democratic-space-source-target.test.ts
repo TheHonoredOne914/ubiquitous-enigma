@@ -21,8 +21,8 @@ test("deep democratic-space keeps restored deep source target instead of hidden 
 test("per-role source usage targets are mode aware", () => {
   assert.equal(getPerRoleSourceUsageTarget("fast_research", getSourceUsagePolicy("fast_research"), 30), 30);
   assert.equal(getPerRoleSourceUsageTarget("deep_research", getSourceUsagePolicy("deep_research"), 30), 30);
-  assert.equal(getPerRoleSourceUsageTarget("phd_level", getSourceUsagePolicy("phd_level"), 30), 20);
-  assert.equal(getPerRoleSourceUsageTarget("fullspectrum", getSourceUsagePolicy("fullspectrum"), 30), 25);
+  assert.equal(getPerRoleSourceUsageTarget("deep_research", getSourceUsagePolicy("deep_research"), 30), 20);
+  assert.equal(getPerRoleSourceUsageTarget("council", getSourceUsagePolicy("council"), 30), 25);
 });
 
 test("fast and deep source requirements are minimums, not retrieval caps", () => {
@@ -44,7 +44,7 @@ test("fast and deep source requirements are minimums, not retrieval caps", () =>
   assert.equal(deepContract.minimumUniqueCitedSources, 80);
   assert.equal(getSourceUsagePolicy("fast_research").minimumToProceed, 40);
   assert.equal(getSourceUsagePolicy("deep_research").minimumToProceed, 80);
-  assert.equal(getSourceUsagePolicy("fullspectrum").minimumToProceed, 30);
+  assert.equal(getSourceUsagePolicy("council").minimumToProceed, 30);
 });
 
 test("mode source targets preserve stricter agenda contract floors", () => {

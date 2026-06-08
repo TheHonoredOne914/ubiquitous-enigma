@@ -27,13 +27,13 @@ test("backend research route defaults to core pipeline instead of legacy multi-s
   assert.match(service, /run_started/);
 });
 
-test("fullspectrum democratic-space planner produces broad bucketed query plan", () => {
+test("council democratic-space planner produces broad bucketed query plan", () => {
   const contract = buildAgendaContract({
     requestId: "regression-full-spectrum",
     originalUserQuery: "Analyze India's declining democratic space from 2022-2025 using Freedom House, V-Dem, EIU, UAPA, FCRA, internet shutdowns, HRW, Amnesty, CIVICUS, Supreme Court responses, EVM/VVPAT allegations, electoral bonds, RSF, EPW, MHA, ECI, The Hindu, and Indian Express.",
-    outputDepth: "phd_level",
+    outputDepth: "deep_research",
   });
-  const plan = buildBucketedQueryPlan(contract, "fullspectrum");
+  const plan = buildBucketedQueryPlan(contract, "council");
   const uniqueQueries = new Set(plan.queries.map((query) => query.query.toLowerCase()));
   const bucketIds = new Set(plan.buckets.map((bucket) => bucket.id));
   assert.ok(uniqueQueries.size >= 80, `expected 80+ unique queries, got ${uniqueQueries.size}`);

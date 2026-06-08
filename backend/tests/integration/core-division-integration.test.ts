@@ -7,7 +7,7 @@ test("core divisions receive EvidencePacks, safe archive routing, and research a
   const result = await runResearchPipeline({
     requestId: "division-core",
     userQuery: "India democratic space 2022-2025 press freedom and electoral integrity",
-    mode: "fullspectrum",
+    mode: "council",
     archiveText: "India democratic space archive with press freedom and UAPA civil liberties notes",
     preloadedSources: fixtureSources as any,
   });

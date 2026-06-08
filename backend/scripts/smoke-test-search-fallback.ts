@@ -7,7 +7,7 @@ const available = {
   brave: Boolean(process.env.BRAVE_API_KEY ?? process.env.BRAVE_KEY),
 };
 
-for (const mode of ["fast_research", "web_search", "deep_research", "phd_level", "fullspectrum"] as const) {
+for (const mode of ["fast_research", "web_search", "deep_research", "deep_research", "council"] as const) {
   const order = getSearchProviderOrder(mode, available);
   console.log(`${mode}: ${order.length ? order.join(" -> ") : "no live search provider configured"}`);
 }
