@@ -8,7 +8,7 @@ const promptA = {
   userMessageId: 11,
   assistantMessageId: 101,
   queryHash: "hash_A",
-  researchMode: "fullspectrum" as const,
+  researchMode: "council" as const,
   eventType: "answer_delta",
   content: "declining democratic space",
 };
@@ -20,7 +20,7 @@ const promptB = {
   userMessageId: 12,
   assistantMessageId: 102,
   queryHash: "hash_B",
-  researchMode: "fullspectrum" as const,
+  researchMode: "council" as const,
   eventType: "answer_delta",
   content: "Election Commission of India",
 };

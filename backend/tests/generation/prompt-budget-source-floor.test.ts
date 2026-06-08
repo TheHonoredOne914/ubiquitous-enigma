@@ -15,8 +15,8 @@ import { createFakeResearchRun } from "../harness/fake-evidence-registry.js";
 const MODES_AND_FLOORS: Array<{ mode: ResearchMode; floor: number }> = [
   { mode: "fast_research", floor: RESEARCH_LIMITS.fast_research.minFinalUniqueCitedSources },
   { mode: "deep_research", floor: RESEARCH_LIMITS.deep_research.minFinalUniqueCitedSources },
-  { mode: "phd_level", floor: RESEARCH_LIMITS.phd_level.minFinalUniqueCitedSources },
-  { mode: "fullspectrum", floor: RESEARCH_LIMITS.fullspectrum.minFinalUniqueCitedSources },
+  { mode: "deep_research", floor: RESEARCH_LIMITS.deep_research.minFinalUniqueCitedSources },
+  { mode: "council", floor: RESEARCH_LIMITS.council.minFinalUniqueCitedSources },
   { mode: "council", floor: RESEARCH_LIMITS.council.minFinalUniqueCitedSources },
 ];
 

@@ -8,7 +8,7 @@ test("fallback after generation failure includes explicit degraded metadata and 
   const result = await runResearchPipeline({
     requestId: "fallback-truth-generation-failure",
     userQuery: "India democratic space 2022-2025",
-    mode: "phd_level",
+    mode: "deep_research",
     preloadedSources: fixtureSources as any,
     forceCoreGenerationFailure: true,
     legacyFallback: async ({ evidenceRegistry }) => `# Executive Thesis
@@ -33,7 +33,7 @@ test("compatibility fallback is distinguishable from unexpected generation failu
   const result = await runResearchPipeline({
     requestId: "fallback-truth-compatibility",
     userQuery: "India democratic space 2022-2025",
-    mode: "phd_level",
+    mode: "deep_research",
     preloadedSources: fixtureSources as any,
     useCoreGeneration: false,
     emergencyCompatibilityMode: true,

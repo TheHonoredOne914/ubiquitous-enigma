@@ -7,7 +7,7 @@ test("core divisions consume EvidencePacks and produce D7/D11 evidence-backed ou
   const result = await runResearchPipeline({
     requestId: "division-live",
     userQuery: "India democratic space 2022-2025 press freedom and electoral integrity",
-    mode: "fullspectrum",
+    mode: "council",
     archiveText: "India democratic space archive with press freedom and UAPA notes",
     preloadedSources: fixtureSources as any,
     generationMode: "deterministic",

@@ -23,7 +23,7 @@ test("mock retrieval builds raw, deduped, filtered, scored, and enriched stages"
 
 test("weak live buckets trigger top-up attempts and SourceGapReport without crashing", async () => {
   const result = await runBucketedRetrieval(smallPlan(), {
-    mode: "phd_level",
+    mode: "deep_research",
     live: true,
     providers: ["tavily"],
     providerKeys: { tavily: "tvly-test-key" },

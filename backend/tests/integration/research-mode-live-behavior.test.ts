@@ -8,8 +8,8 @@ import { applyResearchModeSourceTargets } from "../../src/core/pipeline/research
 test("research modes change query, enrichment, source, and repair limits", () => {
   const fast = modeRetrievalOptions("fast_research");
   const deep = modeRetrievalOptions("deep_research");
-  const phd = modeRetrievalOptions("phd_level");
-  const full = modeRetrievalOptions("fullspectrum");
+  const phd = modeRetrievalOptions("deep_research");
+  const full = modeRetrievalOptions("council");
 
   assert.ok(fast.maxRawResults < deep.maxRawResults);
   assert.ok(deep.maxRawResults < phd.maxRawResults);
@@ -19,9 +19,9 @@ test("research modes change query, enrichment, source, and repair limits", () =>
 });
 
 test("explicit UI mode overrides text inference for source targets", () => {
-  const contract = buildAgendaContract({ requestId: "mode", originalUserQuery: "quick India democracy but use full mode", outputDepth: "phd_level" });
-  applyResearchModeSourceTargets(contract, "fullspectrum");
-  const plan = buildBucketedQueryPlan(contract, "fullspectrum");
+  const contract = buildAgendaContract({ requestId: "mode", originalUserQuery: "quick India democracy but use full mode", outputDepth: "deep_research" });
+  applyResearchModeSourceTargets(contract, "council");
+  const plan = buildBucketedQueryPlan(contract, "council");
 
   assert.ok(contract.minimumUniqueCitedSources >= 30);
   assert.ok(plan.queries.length > 25);

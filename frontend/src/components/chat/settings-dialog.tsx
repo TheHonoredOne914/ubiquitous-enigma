@@ -46,7 +46,7 @@ export function loadSystemPrompts(): SystemPrompts {
   }
 }
 
-export function getSystemPromptForMode(mode: "normal" | "web_search" | "deep_research" | "fast_research" | "phd_level" | "fullspectrum" | "council"): string {
+export function getSystemPromptForMode(mode: "normal" | "web_search" | "deep_research" | "fast_research" | "council"): string {
   const p = loadSystemPrompts();
   const promptKey = mode === "normal" ? "normal" : mode === "fast_research" ? "web_search" : "deep_research";
   return [p.global.trim(), p[promptKey].trim()].filter(Boolean).join("\n\n");

@@ -57,7 +57,6 @@ export const RESEARCH_LIMITS: Record<ResearchMode, ResearchLimitConfig> = {
 export function inferResearchMode(userQuery: string, explicitUserMode?: ResearchMode | "web_search" | "normal" | "deep_research"): ResearchMode {
   if (explicitUserMode && explicitUserMode !== "normal" && explicitUserMode !== "web_search") return explicitUserMode;
   const lower = userQuery.toLowerCase();
-  if (/\b(phd|thesis|maximum depth|max depth|full depth|fullspectrum)\b/.test(lower)) return "deep_research";
   if (/\b(deep|detailed|research|serious prep)\b/.test(lower)) return "deep_research";
   if (/\b(quick|short|brief|fast)\b/.test(lower)) return "fast_research";
   return "fast_research";
@@ -68,8 +67,7 @@ export function isCoreGenerationDefault(mode: ResearchMode): boolean {
   return mode === "deep_research" || mode === "fast_research";
 }
 
-export function agendaOutputDepthForMode(mode: ResearchMode): "brief" | "detailed" | "phd_level" {
+export function agendaOutputDepthForMode(mode: ResearchMode): "brief" | "detailed" {
   if (mode === "fast_research") return "brief";
-  if (mode === "deep_research") return "detailed";
-  return "phd_level"; // For council
+  return "detailed";
 }

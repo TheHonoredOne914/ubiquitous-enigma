@@ -5,7 +5,7 @@ import { buildContextualTopUpQuery, type RetrievalSource } from "../src/core/ret
 import { buildMultiHopExpansion } from "../src/core/retrieval/multi-hop-expander.js";
 import { dedupeByContentSimilarity } from "../src/core/retrieval/source-deduper.js";
 
-const mode = "fullspectrum";
+const mode = "council";
 const contract = buildAgendaContract({
   requestId: "smoke-retrieval-quality",
   originalUserQuery: "Indian democratic space, internet shutdowns, press freedom, ECI defence, Supreme Court doctrine, and federalism objections.",

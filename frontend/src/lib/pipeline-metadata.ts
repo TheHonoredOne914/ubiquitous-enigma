@@ -13,7 +13,7 @@ export interface PipelineMetadata {
   conversationId?: number | string;
   assistantMessageId?: number | string;
   queryHash?: string;
-  researchMode?: "fast_research" | "deep_research" | "phd_level" | "fullspectrum";
+  researchMode?: "fast_research" | "deep_research" | "deep_research" | "council";
   terminalStatus?: PipelineTerminalStatus;
   coreGenerationUsed?: boolean;
   legacyFallbackUsed?: boolean;

@@ -87,7 +87,6 @@ export const MODE_THRESHOLDS: Record<ResearchMode, ModeQualityThresholds> = {
 export function resolveQualityMode(mode: ResearchMode | undefined, outputDepth?: string): ResearchMode | "legacy" {
   if (mode) return mode;
   if (outputDepth === "brief") return "fast_research";
-  if (outputDepth === "phd_level") return "council";
   if (outputDepth === "detailed") return "deep_research";
   return "legacy";
 }

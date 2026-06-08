@@ -45,7 +45,7 @@ test("ResearchModelPlan maps five explicit selected models to role assignments w
 test("ResearchModelPlan marks catalog fallback providers as not generation eligible", () => {
   const plan = buildResearchModelPlan({
     runId: "run-catalog-only",
-    mode: "phd_level",
+    mode: "deep_research",
     userSelectedModels: ["openrouter/qwen/qwen3-32b:free"],
     providerStatuses: [
       {

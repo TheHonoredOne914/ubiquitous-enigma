@@ -5,7 +5,7 @@ import { buildAgendaContract } from "../../../src/core/agenda/agenda-contract.js
 import { buildBucketedQueryPlanWithExpansion } from "../../../src/core/retrieval/query-planner.js";
 
 test("LLM query expansion accepts validated schema and marks query source", async () => {
-  const contract = buildAgendaContract({ originalUserQuery: "ONDC digital commerce policy India", outputDepth: "phd_level" });
+  const contract = buildAgendaContract({ originalUserQuery: "ONDC digital commerce policy India", outputDepth: "deep_research" });
   const providerRouter = {
     completeJson: async () => ({
       provider: "nvidia",
@@ -25,7 +25,7 @@ test("LLM query expansion accepts validated schema and marks query source", asyn
     }),
   } as any;
 
-  const plan = await buildBucketedQueryPlanWithExpansion(contract, "phd_level", {
+  const plan = await buildBucketedQueryPlanWithExpansion(contract, "deep_research", {
     providerRouter,
     providerName: "nvidia",
     model: "moonshotai/kimi-k2.6",
@@ -35,7 +35,7 @@ test("LLM query expansion accepts validated schema and marks query source", asyn
 });
 
 test("LLM query expansion falls back deterministically on invalid schema", async () => {
-  const contract = buildAgendaContract({ originalUserQuery: "ONDC digital commerce policy India", outputDepth: "phd_level" });
+  const contract = buildAgendaContract({ originalUserQuery: "ONDC digital commerce policy India", outputDepth: "deep_research" });
   const providerRouter = {
     completeJson: async () => ({
       provider: "nvidia",
@@ -45,7 +45,7 @@ test("LLM query expansion falls back deterministically on invalid schema", async
     }),
   } as any;
 
-  const plan = await buildBucketedQueryPlanWithExpansion(contract, "phd_level", {
+  const plan = await buildBucketedQueryPlanWithExpansion(contract, "deep_research", {
     providerRouter,
     providerName: "nvidia",
     model: "moonshotai/kimi-k2.6",

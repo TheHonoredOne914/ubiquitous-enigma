@@ -99,7 +99,7 @@ export function buildPassingAnswer(registry: EvidenceRegistryCore, mode: Researc
 }
 
 export function buildD7Section(mode: ResearchMode = "deep_research"): string {
-  const poiMinimum = mode === "fast_research" ? 5 : mode === "deep_research" ? 8 : mode === "phd_level" ? 12 : 15;
+  const poiMinimum = mode === "fast_research" ? 5 : mode === "deep_research" ? 8 : mode === "deep_research" ? 12 : 15;
   const pois = Array.from({ length: poiMinimum }, (_, index) => `POI ${index + 1}: Can the honourable member identify the registry source that proves safeguard ${index + 1}?`).join("\n");
   return [
     "Treasury Bench:",
@@ -118,7 +118,7 @@ export function buildD7Section(mode: ResearchMode = "deep_research"): string {
 }
 
 export function buildD11Section(mode: ResearchMode = "deep_research"): string {
-  const extra = mode === "fullspectrum"
+  const extra = mode === "council"
     ? " It also weighs counterclaims and contradictions across all prior divisions before ranking floor strategy."
     : "";
   return [

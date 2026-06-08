@@ -9,7 +9,7 @@ test("council session degrades before briefing when raw source floor is impossib
   const contract = buildAgendaContract({
     requestId: "council-raw-source-floor",
     originalUserQuery: "Council research on Indian constitutional accountability",
-    outputDepth: "phd_level",
+    outputDepth: "deep_research",
   });
 
   const session = await runCouncilSession({

@@ -120,7 +120,7 @@ test("same generic claim repeated for 30 sources fails while 30 real usage items
 });
 
 test("generic parliament topics do not require nine source buckets", () => {
-  const agendaContract = buildAgendaContract({ requestId: "generic-three-buckets", originalUserQuery: "UGC regulations 2026", outputDepth: "phd_level" });
+  const agendaContract = buildAgendaContract({ requestId: "generic-three-buckets", originalUserQuery: "UGC regulations 2026", outputDepth: "deep_research" });
   const bucketIds = ["government_official", "indian_major_media", "court_legal"] as const;
   const sources = Array.from({ length: 30 }, (_, index) => ({
     title: `UGC source ${index + 1}`,

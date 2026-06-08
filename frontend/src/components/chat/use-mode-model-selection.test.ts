@@ -16,8 +16,8 @@ test("mode model selection keeps fast separate from deep/phd/full modes", () => 
   assert.deepEqual(resolveModeModelSelection("normal", state), ["groq/llama-3.3-70b-versatile"]);
   assert.deepEqual(resolveModeModelSelection("fast_research", state), state.webSearchModels);
   assert.deepEqual(resolveModeModelSelection("deep_research", state), state.deepResearchModels);
-  assert.deepEqual(resolveModeModelSelection("phd_level", state), state.deepResearchModels);
-  assert.deepEqual(resolveModeModelSelection("fullspectrum", state), state.deepResearchModels);
+  assert.deepEqual(resolveModeModelSelection("deep_research", state), state.deepResearchModels);
+  assert.deepEqual(resolveModeModelSelection("council", state), state.deepResearchModels);
 });
 
 test("mode model repair removes stale selections without preferring NVIDIA Kimi", () => {

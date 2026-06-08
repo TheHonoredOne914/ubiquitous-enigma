@@ -13,7 +13,7 @@ test("India democracy live core path is gated and meaningful", { skip: hasKeys ?
   const result = await runResearchPipeline({
     requestId: "live-india-democracy",
     userQuery: "Analyze India’s declining democratic space from 2022–2025 using Freedom House, V-Dem, EIU, UAPA, FCRA, internet shutdowns, HRW, Amnesty, CIVICUS, Supreme Court responses, EVM/VVPAT allegations, electoral bonds, RSF, EPW, MHA, ECI, The Hindu, and Indian Express. Make it Indian Mock Parliament-ready with research angles, Treasury Bench arguments, Opposition arguments, POIs, rebuttals, and resolution clauses.",
-    mode: "phd_level",
+    mode: "deep_research",
     liveRetrieval: true,
     allowMockRetrieval: false,
     emit: (event) => events.push(event.type),

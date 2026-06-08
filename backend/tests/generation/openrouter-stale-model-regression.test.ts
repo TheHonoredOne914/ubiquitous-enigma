@@ -8,7 +8,7 @@ import { createFakeResearchRun } from "../harness/fake-evidence-registry.js";
 const STALE_MODELS = /claude-3\.5-sonnet|claude-3-5-sonnet|gemini-1\.5-pro|gemini-1\.5-flash/;
 
 test("provider fallback defaults never include stale OpenRouter Claude or Gemini 1.5 models", () => {
-  for (const mode of ["fast_research", "deep_research", "phd_level", "fullspectrum"] as const) {
+  for (const mode of ["fast_research", "deep_research", "deep_research", "council"] as const) {
     const ids = fallbackModelsForMode(mode).map((candidate) => `${candidate.providerName}/${candidate.model}`);
     assert.equal(ids.some((id) => STALE_MODELS.test(id)), false, `${mode}: ${ids.join(", ")}`);
   }

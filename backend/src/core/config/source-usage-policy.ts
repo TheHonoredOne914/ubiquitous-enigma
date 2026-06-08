@@ -35,26 +35,6 @@ export function getSourceUsagePolicy(mode: SourceUsagePolicyMode): SourceUsagePo
         allowDeterministicExtractionFallback: true,
         roleCount: 8,
       };
-    case "phd_level":
-      return {
-        requiredSources: 30,
-        perRoleMinimum: 12,
-        minimumToProceed: 20,
-        strictFailure: true,
-        allowCompletedWithSourceGaps: true,
-        allowDeterministicExtractionFallback: true,
-        roleCount: 8,
-      };
-    case "fullspectrum":
-      return {
-        requiredSources: 30,
-        perRoleMinimum: 15,
-        minimumToProceed: 30,
-        strictFailure: true,
-        allowCompletedWithSourceGaps: true,
-        allowDeterministicExtractionFallback: true,
-        roleCount: 8,
-      };
     case "council":
       return {
         requiredSources: 180,

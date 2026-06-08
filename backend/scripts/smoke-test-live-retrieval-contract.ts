@@ -16,7 +16,7 @@ const query = [
 const contract = buildAgendaContract({
   requestId: `live-retrieval-contract-${mode}`,
   originalUserQuery: query,
-  outputDepth: mode === "fast_research" ? "brief" : "phd_level",
+  outputDepth: mode === "fast_research" ? "brief" : "deep_research",
 });
 const plan = await buildBucketedQueryPlanWithExpansion(contract, mode);
 const events: Array<{ type: string; data?: Record<string, unknown> }> = [];

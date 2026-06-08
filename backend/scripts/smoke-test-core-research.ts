@@ -5,7 +5,7 @@ import { decideFinalResearchStatus } from "../src/core/pipeline/final-status.js"
 import type { PipelineEvent } from "../src/core/pipeline/pipeline-events.js";
 import { runResearchPipeline } from "../src/core/pipeline/research-pipeline.js";
 
-type SmokeMode = "fast_research" | "deep_research" | "phd_level" | "fullspectrum";
+type SmokeMode = "fast_research" | "deep_research" | "deep_research" | "council";
 
 const mode = parseMode(process.argv.find((arg) => arg.startsWith("--mode="))?.split("=")[1]);
 const prompt = "Analyze India democratic space and civil liberties for Indian Mock Parliament with Treasury Bench, Opposition, POIs, rebuttals, and sources.";
@@ -107,7 +107,7 @@ if (result.usedLegacyFallback) {
 }
 
 function parseMode(value: string | undefined): SmokeMode {
-  if (value === "fast_research" || value === "deep_research" || value === "phd_level" || value === "fullspectrum") return value;
+  if (value === "fast_research" || value === "deep_research" || value === "deep_research" || value === "council") return value;
   return "deep_research";
 }
 

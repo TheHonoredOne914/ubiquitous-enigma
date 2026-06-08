@@ -24,7 +24,7 @@ test("B14-19/B14-21 final source selection preserves rare critical buckets and l
   const selected = selectFinalSources([...courtSources, ...rare], {
     query: "legal parliamentary Election Commission policy",
     limit: 12,
-    mode: "phd_level",
+    mode: "deep_research",
     requiredBuckets: ["court_legal", "parliamentary_records", "electoral_integrity", "policy_research"],
   });
 

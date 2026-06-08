@@ -17,7 +17,7 @@ async function main() {
   const result = await generateCoreResearchAnswer({
     requestId: "strong-citations",
     userQuery: agendaContract.originalUserQuery,
-    mode: "phd_level",
+    mode: "deep_research",
     agendaContract,
     evidenceRegistry,
     evidencePacks,

@@ -60,8 +60,8 @@ test("provider prompt budgets preserve mode citation floors under compression", 
   const modes: Array<{ mode: ResearchMode; target: number }> = [
     { mode: "fast_research", target: 40 },
     { mode: "deep_research", target: 80 },
-    { mode: "phd_level", target: 30 },
-    { mode: "fullspectrum", target: 30 },
+    { mode: "deep_research", target: 30 },
+    { mode: "council", target: 30 },
     { mode: "council", target: 180 },
   ];
 

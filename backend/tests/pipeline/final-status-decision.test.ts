@@ -47,7 +47,7 @@ test("legacy fallback is warning in deep mode and failed in PhD/full modes", () 
   }), "legacy_fallback_used");
 
   assert.equal(decideFinalResearchStatus({
-    mode: "phd_level",
+    mode: "deep_research",
     coreGenerationUsed: false,
     legacyFallbackUsed: true,
     sourceContract: { ...strictContract, requiredSources: 30, finalUniqueCitedSources: 30 },

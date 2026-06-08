@@ -4,8 +4,8 @@ import { getStreamSilenceTimeoutMs } from "./stream-timeout";
 
 test("deep PhD and FullSpectrum modes use four minute silence budget", () => {
   assert.equal(getStreamSilenceTimeoutMs("deep_research", ["groq/a"]), 240_000);
-  assert.equal(getStreamSilenceTimeoutMs("phd_level", ["groq/a"]), 240_000);
-  assert.equal(getStreamSilenceTimeoutMs("fullspectrum", ["groq/a"]), 240_000);
+  assert.equal(getStreamSilenceTimeoutMs("deep_research", ["groq/a"]), 240_000);
+  assert.equal(getStreamSilenceTimeoutMs("council", ["groq/a"]), 240_000);
 });
 
 test("multi-model research uses two and a half minute silence budget", () => {

@@ -30,8 +30,8 @@ test("deep research source shortfall without SourceGapReport fails", () => {
   assert.equal(result.passed, false);
 });
 
-test("PhD and fullspectrum require strict source completion by default", () => {
-  for (const mode of ["phd_level", "fullspectrum"] as const) {
+test("PhD and council require strict source completion by default", () => {
+  for (const mode of ["deep_research", "council"] as const) {
     const result = evaluateSourceContract({
       mode,
       requiredSources: 30,

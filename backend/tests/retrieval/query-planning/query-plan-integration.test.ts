@@ -7,9 +7,9 @@ import { buildBucketedQueryPlan } from "../../../src/core/retrieval/query-planne
 test("integrated planner avoids accountability fallback, duplicate years, and generic shallow plans", () => {
   const contract = buildAgendaContract({
     originalUserQuery: "ONDC digital commerce and small sellers in Indian Parliament 2026",
-    outputDepth: "phd_level",
+    outputDepth: "deep_research",
   });
-  const plan = buildBucketedQueryPlan(contract, "fullspectrum");
+  const plan = buildBucketedQueryPlan(contract, "council");
   const joined = plan.queries.map((query) => query.query).join("\n");
 
   assert.doesNotMatch(joined, /\baccountability\b/i);

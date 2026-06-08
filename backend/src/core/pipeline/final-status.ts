@@ -91,7 +91,7 @@ export function decideFinalResearchStatus(input: DecideFinalResearchStatusInput)
   }
 
   // FIX 1: Hard rule — completed_with_source_gaps requires citations > 0
-  // Research modes that can use source gap answers: fast_research, web_search, deep_research, phd_level, fullspectrum
+  // Research modes that can use source gap answers: fast_research, web_search, deep_research
   if (input.sourceContract.status === "passed_with_source_gaps") {
     if (
       Boolean(input.sourceGapReport)
