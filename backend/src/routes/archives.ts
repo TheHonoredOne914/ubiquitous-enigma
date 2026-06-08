@@ -1,20 +1,28 @@
 import { Router } from "express";
-import { asc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
-import { db, archives as archivesTable, archiveContexts as archiveContextsTable, archiveResearchAngles as archiveResearchAnglesTable, conversations as conversationsTable } from "../db.js";
+import { 
+  listArchives, 
+  createArchive as createArchiveDb, 
+  updateArchive as updateArchiveDb,
+  getArchiveById,
+  deleteArchive,
+  getConversationsByArchiveId,
+  countArchives,
+  countConversationsByArchiveId,
+  getArchiveResearchAngles,
+  upsertArchiveResearchAngles,
+  type ArchiveRecord 
+} from "../db.js";
 import { getGeminiClient, isGeminiEnabled } from "../lib/gemini-client.js";
 
-export type ArchiveRecord = {
-  id: number;
-  name: string;
-  topic: string;
+export type { ArchiveRecord };
+
+export type ArchiveRecordWithAngles = ArchiveRecord & {
   researchAngles?: string[];
-  createdAt: Date;
-  updatedAt: Date;
 };
 
 export type DeleteArchiveIfSafeResult =
-  | { status: "deleted"; archive: ArchiveRecord }
+  | { status: "deleted"; archive: ArchiveRecordWithAngles }
   | { status: "not_found" }
   | { status: "last_archive" }
   | { status: "has_conversations" };
@@ -36,7 +44,7 @@ type AnglesMeta = {
 };
 
 export interface ArchivesStore {
-  listArchives(): Promise<ArchiveRecord[]>;
+  listArchives(): Promise<ArchiveRecordWithAngles[]>;
   createArchive(input: CreateArchiveInput): Promise<ArchiveRecord>;
   updateArchive(id: number, input: UpdateArchiveInput): Promise<ArchiveRecord | null>;
   getResearchAngles(id: number): Promise<{ archiveId: number; angles: string[]; meta: AnglesMeta } | null>;
@@ -142,103 +150,63 @@ async function generateAngles(topic: string, committee?: string): Promise<{ angl
   }
 }
 
-const drizzleArchivesStore: ArchivesStore = {
+const supabaseArchivesStore: ArchivesStore = {
   async listArchives() {
-    const rows = await db.select().from(archivesTable).orderBy(asc(archivesTable.createdAt));
-    const angles = await db.select().from(archiveResearchAnglesTable);
-    const angleMap = new Map<number, string[]>();
-    for (const row of angles) angleMap.set(row.archiveId, parseJsonArray(row.anglesJson));
-    return rows.map((row) => ({ ...row, researchAngles: angleMap.get(row.id) ?? [] }));
+    const rows = await listArchives();
+    const anglesPromises = rows.map(async (row) => {
+      const anglesData = await getArchiveResearchAngles(row.id);
+      return {
+        ...row,
+        researchAngles: anglesData ? parseJsonArray(anglesData.angles_json) : [],
+      };
+    });
+    return Promise.all(anglesPromises);
   },
   async createArchive(input) {
-    const now = new Date();
     try {
-      const archive = db.transaction((tx) => {
-        const created = tx.insert(archivesTable).values({
-          name: input.name,
-          topic: input.topic,
-          createdAt: now,
-          updatedAt: now,
-        } as any).returning().get();
-
-        tx.insert(archiveContextsTable).values({
-          archiveId: created.id,
-          summary: "",
-          updatedAt: now,
-        }).onConflictDoNothing().run();
-
-        tx.insert(archiveResearchAnglesTable).values({
-          archiveId: created.id,
-          anglesJson: "[]",
-          metaJson: "{}",
-          updatedAt: now,
-        }).onConflictDoNothing().run();
-
-        return created;
-      });
-
+      const archive = await createArchiveDb(input.name, input.topic);
+      // Initialize related records
+      await upsertArchiveResearchAngles(archive.id, [], {});
       return archive;
     } catch (err) {
-      console.error("[archives] createArchive transaction failed:", err);
+      console.error("[archives] createArchive failed:", err);
       throw err;
     }
   },
   async updateArchive(id, input) {
-    const [updated] = await db.update(archivesTable).set({
-      ...(input.name ? { name: input.name } : {}),
-      ...(input.topic ? { topic: input.topic } : {}),
-      updatedAt: new Date(),
-    } as any).where(eq(archivesTable.id, id)).returning();
-
-    return updated ?? null;
+    return updateArchiveDb(id, input);
   },
   async getResearchAngles(id) {
-    const [row] = await db.select().from(archiveResearchAnglesTable).where(eq(archiveResearchAnglesTable.archiveId, id));
+    const row = await getArchiveResearchAngles(id);
     if (!row) return null;
-    return { archiveId: id, angles: parseJsonArray(row.anglesJson), meta: parseMeta(row.metaJson) };
+    return { 
+      archiveId: id, 
+      angles: parseJsonArray(row.angles_json), 
+      meta: parseMeta(row.meta_json) 
+    };
   },
   async setResearchAngles(id, angles, meta) {
-    const [archive] = await db.select({ id: archivesTable.id }).from(archivesTable).where(eq(archivesTable.id, id));
+    const archive = await getArchiveById(id);
     if (!archive) return null;
-    await db.insert(archiveResearchAnglesTable).values({
-      archiveId: id,
-      anglesJson: JSON.stringify(angles.slice(0, 20)),
-      metaJson: JSON.stringify(meta ?? {}),
-      updatedAt: new Date(),
-    }).onConflictDoUpdate({
-      target: archiveResearchAnglesTable.archiveId,
-      set: {
-        anglesJson: JSON.stringify(angles.slice(0, 20)),
-        metaJson: JSON.stringify(meta ?? {}),
-        updatedAt: new Date(),
-      },
-    });
+    const result = await upsertArchiveResearchAngles(id, angles.slice(0, 20), meta ?? {});
     return { archiveId: id, angles: angles.slice(0, 20), meta: meta ?? {} };
   },
   async deleteArchiveIfSafe(id) {
-    return db.transaction((tx) => {
-      const archive = tx.select().from(archivesTable).where(eq(archivesTable.id, id)).get();
-      if (!archive) return { status: "not_found" as const };
+    const archive = await getArchiveById(id);
+    if (!archive) return { status: "not_found" as const };
 
-      const archiveCountRow = tx.select({ count: sql<number>`count(*)` }).from(archivesTable).get();
-      if (Number(archiveCountRow?.count ?? 0) <= 1) return { status: "last_archive" as const };
+    const archiveCount = await countArchives();
+    if (archiveCount <= 1) return { status: "last_archive" as const };
 
-      const linkedConversationCountRow = tx
-        .select({ count: sql<number>`count(*)` })
-        .from(conversationsTable)
-        .where(eq(conversationsTable.archiveId, id))
-        .get();
-      if (Number(linkedConversationCountRow?.count ?? 0) > 0) return { status: "has_conversations" as const };
+    const conversationCount = await countConversationsByArchiveId(id);
+    if (conversationCount > 0) return { status: "has_conversations" as const };
 
-      const deleted = tx.delete(archivesTable).where(eq(archivesTable.id, id)).returning().get();
-      return deleted
-        ? { status: "deleted" as const, archive: deleted }
-        : { status: "not_found" as const };
-    });
+    await deleteArchive(id);
+    return { status: "deleted" as const, archive: { ...archive, researchAngles: [] } };
   },
 };
 
-export function createArchivesRouter(store: ArchivesStore = drizzleArchivesStore) {
+export function createArchivesRouter(store: ArchivesStore = supabaseArchivesStore) {
   const router = Router();
 
   router.get("/archives", async (_req, res) => {
@@ -373,7 +341,7 @@ export function createArchivesRouter(store: ArchivesStore = drizzleArchivesStore
       res.status(400).json({ error: "Invalid request body" });
       return;
     }
-    const [archive] = await db.select().from(archivesTable).where(eq(archivesTable.id, params.data.id));
+    const archive = await getArchiveById(params.data.id);
     if (!archive) {
       res.status(404).json({ error: "Archive not found" });
       return;

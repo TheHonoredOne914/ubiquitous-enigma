@@ -2,17 +2,23 @@ import { Router } from "express";
 import { z } from "zod";
 import { createHash, randomUUID } from "node:crypto";
 import {
-  db,
-  archives as archivesTable,
-  archiveContexts as archiveContextsTable,
-  conversations as conversationsTable,
-  messages as messagesTable,
+  getArchiveContext,
+  upsertArchiveContext,
+  createMessage,
+  updateArchiveIntelligenceProfile,
+  getConversationsByArchiveId,
+  getArchiveById,
+  createConversation,
+  getMessagesByConversationId,
+  listArchives,
+  getArchiveResearchAngles,
+  upsertArchiveResearchAngles,
 } from "../db.js";
 import { getGroqClient, isGroqEnabled } from "../lib/groq-client.js";
 import { getOllamaClient, isOllamaEnabled } from "../lib/ollama-client.js";
 import { getNvidiaClient, isNvidiaEnabled } from "../lib/nvidia-client.js";
 import { getGeminiClient, isGeminiEnabled } from "../lib/gemini-client.js";
-import { eq, asc } from "drizzle-orm";
+
 import { searchWeb, searchWebDeep, searchIndianKanoon, formatSearchResults, deduplicateResults, engineerQueryForIndia, engineerQueryForMedia, engineerQueryForSociocultural, engineerQueryForDemocracy } from "../lib/web-search.js";
 import type { CourtJudgement } from "../lib/web-search.js";
 import { enrichResults, formatRagContext, formatRagContextFromPassages, rerankPassages, decomposeQuery, canonicalizeUrl, countCitations, buildSearchSystem, classifyTopic, type TopicType } from "../lib/rag.js";
