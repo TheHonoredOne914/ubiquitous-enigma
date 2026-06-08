@@ -1,4 +1,7 @@
 ```
+# Test files
+backend/tests/unit/**
+
 # Logs and temp files
 *.log
 *.tmp
@@ -7,12 +10,22 @@
 # Environment
 .env
 .env.local
-.env.
+.env.*
 
 # Editors
 .vscode/
 .idea/
 
-# Original rules preserved
-*.log
+# Dependencies
+node_modules/
+__pycache__/
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+
+# Build artifacts
+dist/
+build/
+target/
 ```

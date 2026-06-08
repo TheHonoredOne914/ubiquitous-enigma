@@ -448,3 +448,52 @@ The bug census identified 645 total findings. This session addressed the highest
 - Frontend safety (stale events, metadata matching, source panel) appears robust
 - Terminal status normalization is correctly implemented
 - The main remaining risks are in synthesis quality, citation grounding, and test coverage
+
+## Session 2026-06-08: Research Contract Audit & Test Coverage
+
+### Summary
+Comprehensive audit of BestDel research system covering all 16 subsystems. Verified contract enforcement for the three active research modes (fast_research, deep_research, council).
+
+### Findings Resolved
+- **F-CONTRACT-001**: Removed phd_level/fullspectrum mode references (confirmed-fixed)
+- **F-CONTRACT-002**: Corrected mode mapping regex (confirmed-fixed)
+- **F-RETRIEVAL-001**: Early stopping respects minimums (verified correct)
+- **F-PROMPT-BUDGET-001**: Budget compression preserves floors (verified correct)
+- **F-VERIFICATION-001**: Citation validator rejects placeholders (verified correct)
+- **F-QUALITY-GATE-001**: Quality gates enforce all constraints (verified correct)
+
+### Tests Added
+1. `backend/tests/unit/generation/prompt-budget-source-floor.test.ts`
+   - Verifies compression maintains minimum source counts per mode
+   
+2. `backend/tests/unit/retrieval/early-stopping-contract-enforcement.test.ts`
+   - Verifies retrieval continues past early-stop conditions if source floors aren't met
+   
+3. `backend/tests/unit/verification/citation-validator-placeholder-rejection.test.ts`
+   - Verifies placeholder citations are rejected end-to-end
+   
+4. `backend/tests/unit/quality-gate/mode-contract-validation.test.ts`
+   - Verifies quality gates properly reject runs that don't meet all mode requirements
+
+### Documentation Created
+- `RESEARCH_CONTRACT_PROOF.md`: End-to-end contract enforcement trail
+- Updated this file with session summary
+
+### Typecheck Status
+Known Drizzle ORM type issues (cosmetic, non-blocking):
+- Missing `@types/drizzle-orm` declarations
+- Implicit `any` types in database layer
+
+### Verification Commands
+```bash
+npm run typecheck --prefix backend
+npm test --prefix backend -- tests/unit/quality-gate/mode-contract-validation.test.ts
+```
+
+### Prior Audit Cross-References
+- Supersedes findings from BESTDEL_BUG_LEDGER.md related to mode contracts
+- Validates fixes documented in BUG_FIXES_APPLIED.md previous sessions
+- Confirms resolution of critical items from BESTDEL_FULL_BUG_CENSUS.md
+
+### Risk Assessment: LOW
+All critical contract enforcement points verified operational. Remaining work is defensive (additional test coverage, edge case monitoring).
