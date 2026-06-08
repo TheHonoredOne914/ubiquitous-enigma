@@ -25,6 +25,7 @@ import { loadProviderKeys } from "@/lib/provider-keys";
 import { useProviderModels } from "@/hooks/use-provider-models";
 import { apiFetch } from "@/lib/api-fetch";
 import { StreamingText } from "./streaming-text";
+import { ThinkingIndicator } from "./thinking-indicator";
 import { ResearchPipeline } from "./research-pipeline";
 import { CouncilChamberPanel } from "@/components/council/council-chamber-panel";
 import { PersistedPipeline, extractPipelineMeta } from "./persisted-pipeline";
@@ -1057,11 +1058,7 @@ export function ChatArea({
                         <StreamingText content={streamingContent} isStreaming={isStreaming && !isComplete} />
                       </div>
                     ) : (
-                      <div className="flex gap-1 h-5 items-center">
-                        <span className="w-2 h-2 bg-foreground/40 rounded-full animate-pulse" />
-                        <span className="w-2 h-2 bg-foreground/40 rounded-full animate-pulse delay-150" />
-                        <span className="w-2 h-2 bg-foreground/40 rounded-full animate-pulse delay-300" />
-                      </div>
+                      <ThinkingIndicator mode="normal" />
                     )}
                   </div>
                 </div>
@@ -1099,11 +1096,7 @@ export function ChatArea({
                         <StreamingText content={pipeline.streamingContent} isStreaming={isStreaming && !isComplete} />
                       </div>
                     ) : (
-                      <div className="flex gap-1 h-5 items-center">
-                        <span className="w-2 h-2 bg-foreground/40 rounded-full animate-pulse" />
-                        <span className="w-2 h-2 bg-foreground/40 rounded-full animate-pulse delay-150" />
-                        <span className="w-2 h-2 bg-foreground/40 rounded-full animate-pulse delay-300" />
-                      </div>
+                      <ThinkingIndicator mode="rhetorics" rhetoricsType={rhetoricsType} />
                     )}
                   </div>
                 </div>
