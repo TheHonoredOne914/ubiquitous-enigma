@@ -1,5 +1,32 @@
 # Full Repo Bug Audit
 
+## 2026-06-08 Archive Supabase Storage Repair
+
+Problem: archive list/create calls returned 500 because Supabase reported `PGRST205`, meaning `public.archives` was not present in the exposed schema cache. Conversation listing also returned 500 because `backend/src/services/anthropic-service.ts` still referenced a removed Drizzle `db` variable.
+
+Root cause: the checkout had partially migrated persistence to Supabase in `backend/src/db.ts`, but archive/conversation runtime routes still contained old Drizzle query calls and there was no checked-in archive/chat Supabase schema setup script.
+
+Files changed:
+- `backend/src/db.ts`
+- `backend/src/routes/archives.ts`
+- `backend/src/services/anthropic-service.ts`
+- `backend/tests/db.test.ts`
+- `backend/tests/archives.test.ts`
+- `backend/scripts/setup-supabase-archives.sql`
+- `docs/backend-overhaul/CURRENT_SYSTEM_STATUS.md`
+- `docs/backend-overhaul/FULL_REPO_BUG_AUDIT.md`
+
+Fix: added Supabase table setup SQL for `archives`, `conversations`, `messages`, archive context, research angles, and intelligence profiles with RLS enabled; added Supabase helper functions and explicit snake_case-to-camelCase API mappers; replaced broken Drizzle calls in archive/conversation/message paths with the Supabase helpers; updated route tests and DB contract tests.
+
+Runtime reasoning: `GET/POST /api/archives` now uses a concrete Supabase schema contract and returns the camelCase shape consumed by the frontend. `GET/POST /api/anthropic/conversations` and `POST /api/anthropic/conversations/:id/messages` no longer touch undefined `db`; they read/write the same Supabase tables used by archive creation.
+
+Verification:
+- `npm.cmd run typecheck --prefix backend`
+- `node --import tsx --test tests\db.test.ts tests\archives.test.ts` from `backend`
+- `npm.cmd run build --prefix backend`
+
+Remaining risk: the SQL was not applied from this environment because no Supabase SQL MCP tool, Supabase CLI, or `psql` binary is available. The configured Supabase project still needs `backend/scripts/setup-supabase-archives.sql` run once to clear the live `PGRST205` error.
+
 ## 2026-06-01 Functional Pipeline Repair Update
 
 Scope: targeted implementation of the minimum end-to-end research pipeline path from `BESTDEL_FULL_BUG_CENSUS.md`.

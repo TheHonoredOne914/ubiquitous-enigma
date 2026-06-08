@@ -5,12 +5,18 @@ import {
   getArchiveContext,
   upsertArchiveContext,
   createMessage,
-  updateArchiveIntelligenceProfile,
   getConversationsByArchiveId,
   getArchiveById,
   createConversation,
+  createMessageFromJson,
+  deleteConversation,
+  getConversationById,
   getMessagesByConversationId,
-  listArchives,
+  listConversations,
+  toApiConversation,
+  toApiMessage,
+  updateConversationTitle,
+  updateMessage,
   getArchiveResearchAngles,
   upsertArchiveResearchAngles,
 } from "../db.js";
@@ -255,10 +261,7 @@ async function mergeAssistantAnswerIntoArchiveContext(
   const distilled = extractArchiveFacts(answer, topicType);
   if (!distilled) return;
 
-  const [currentContext] = await db
-    .select()
-    .from(archiveContextsTable)
-    .where(eq(archiveContextsTable.archiveId, archiveId));
+  const currentContext = await getArchiveContext(archiveId);
 
   const mergedSummary = await mergeArchiveSummaries(
     currentContext?.summary ?? existingSummary ?? "",
@@ -266,14 +269,7 @@ async function mergeAssistantAnswerIntoArchiveContext(
     {},
   );
 
-  await db.insert(archiveContextsTable).values({
-    archiveId,
-    summary: mergedSummary,
-    updatedAt: new Date(),
-  }).onConflictDoUpdate({
-    target: archiveContextsTable.archiveId,
-    set: { summary: mergedSummary, updatedAt: new Date() },
-  });
+  await upsertArchiveContext(archiveId, mergedSummary);
 }
 
 export function ensureResearchWorkerModels(
@@ -1319,24 +1315,15 @@ const activeResearchRunsByConversation = new Map<number, ActiveResearchRun>();
 
 const assistantPersistenceStore = {
   async insertAssistantMessage(conversationId: number, content: string, metadataJson?: string | null, runId?: string | null, runStatus?: string | null) {
-    await db.insert(messagesTable).values({
-      conversationId,
-      role: "assistant",
-      content,
-      metadataJson: metadataJson ?? null,
-      runId: runId ?? null,
-      runStatus: runStatus ?? null,
-      runPhase: runStatus ? "terminal" : null,
-      runLastHeartbeatAt: runStatus ? new Date() : null,
-    } as any);
+    await createMessageFromJson(conversationId, "assistant", content, metadataJson ?? null, runId ?? null, runStatus ?? null);
   },
   async updateAssistantMessage(id: number | string, content: string, metadataJson?: string | null, runId?: string | null, runStatus?: string | null) {
-    await db.update(messagesTable).set({
+    await updateMessage(Number(id), {
       content,
       ...(metadataJson !== undefined ? { metadataJson } : {}),
       ...(runId !== undefined ? { runId } : {}),
-      ...(runStatus !== undefined ? { runStatus, runPhase: "terminal", runLastHeartbeatAt: new Date() } : {}),
-    } as any).where(eq(messagesTable.id, Number(id)));
+      ...(runStatus !== undefined ? { runStatus } : {}),
+    });
   },
 };
 
@@ -1736,23 +1723,18 @@ router.get("/anthropic/conversations", async (req, res) => {
     return;
   }
   const convos = queryParsed.data.archiveId
-    ? await db.select().from(conversationsTable)
-        .where(eq(conversationsTable.archiveId, queryParsed.data.archiveId))
-        .orderBy(asc(conversationsTable.createdAt))
-    : await db.select().from(conversationsTable).orderBy(asc(conversationsTable.createdAt));
-  res.json(convos);
+    ? await getConversationsByArchiveId(queryParsed.data.archiveId)
+    : await listConversations();
+  res.json(convos.map(toApiConversation));
 });
 
 router.post("/anthropic/conversations", async (req, res) => {
   const parsed = CreateAnthropicConversationBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid request body" }); return; }
-  const [archive] = await db.select().from(archivesTable).where(eq(archivesTable.id, parsed.data.archiveId));
+  const archive = await getArchiveById(parsed.data.archiveId);
   if (!archive) { res.status(404).json({ error: "Archive not found" }); return; }
-  const [convo] = await db.insert(conversationsTable).values({
-    title: parsed.data.title,
-    archiveId: parsed.data.archiveId,
-  } as any).returning();
-  res.status(201).json(convo);
+  const convo = await createConversation(parsed.data.archiveId, parsed.data.title);
+  res.status(201).json(toApiConversation(convo));
 });
 
 // Update conversation title
@@ -1761,13 +1743,9 @@ router.patch("/anthropic/conversations/:id", async (req, res) => {
   if (!Number.isFinite(id)) { res.status(400).json({ error: "Invalid id" }); return; }
   const title = typeof req.body?.title === "string" ? req.body.title.trim() : "";
   if (!title) { res.status(400).json({ error: "title is required" }); return; }
-  const [updated] = await db
-    .update(conversationsTable)
-    .set({ title: title.slice(0, 200) })
-    .where(eq(conversationsTable.id, id))
-    .returning();
+  const updated = await updateConversationTitle(id, title.slice(0, 200));
   if (!updated) { res.status(404).json({ error: "Conversation not found" }); return; }
-  res.json(updated);
+  res.json(toApiConversation(updated));
 });
 
 // Generate AI conversation title from first user message
@@ -1805,17 +1783,16 @@ router.post("/anthropic/generate-title", async (req, res) => {
 router.get("/anthropic/conversations/:id", async (req, res) => {
   const parsed = GetAnthropicConversationParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) { res.status(400).json({ error: "Invalid id" }); return; }
-  const [convo] = await db.select().from(conversationsTable).where(eq(conversationsTable.id, parsed.data.id));
+  const convo = await getConversationById(parsed.data.id);
   if (!convo) { res.status(404).json({ error: "Conversation not found" }); return; }
-  const msgs = await db.select().from(messagesTable).where(eq(messagesTable.conversationId, parsed.data.id)).orderBy(asc(messagesTable.createdAt));
-  res.json({ ...convo, messages: msgs });
+  const msgs = await getMessagesByConversationId(parsed.data.id);
+  res.json({ ...toApiConversation(convo), messages: msgs.map(toApiMessage) });
 });
 
 router.delete("/anthropic/conversations/:id", async (req, res) => {
   const parsed = DeleteAnthropicConversationParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) { res.status(400).json({ error: "Invalid id" }); return; }
-  await db.delete(messagesTable).where(eq(messagesTable.conversationId, parsed.data.id));
-  const [deleted] = await db.delete(conversationsTable).where(eq(conversationsTable.id, parsed.data.id)).returning();
+  const deleted = await deleteConversation(parsed.data.id);
   if (!deleted) { res.status(404).json({ error: "Conversation not found" }); return; }
   res.status(204).end();
 });
@@ -1823,8 +1800,8 @@ router.delete("/anthropic/conversations/:id", async (req, res) => {
 router.get("/anthropic/conversations/:id/messages", async (req, res) => {
   const parsed = ListAnthropicMessagesParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) { res.status(400).json({ error: "Invalid id" }); return; }
-  const msgs = await db.select().from(messagesTable).where(eq(messagesTable.conversationId, parsed.data.id)).orderBy(asc(messagesTable.createdAt));
-  res.json(msgs);
+  const msgs = await getMessagesByConversationId(parsed.data.id);
+  res.json(msgs.map(toApiMessage));
 });
 
 function buildEnhanceMetaPrompt(prompt: string, mode: string): string {
@@ -3299,7 +3276,7 @@ async function handleRhetorics(
   const client = getGroqClient(keys.groqKey);
   const fullText = await streamRhetoricsResponse(client, systemPrompt, chatHistory, userQuery, temperature, send, keys);
   if (fullText.trim()) {
-    await db.insert(messagesTable).values({ conversationId, role: "assistant", content: fullText });
+    await createMessage(conversationId, "assistant", fullText);
     await mergeAssistantAnswerIntoArchiveContext(archiveId, archiveSummary, fullText, topic);
   }
   writer.finishStream();
@@ -4790,15 +4767,11 @@ router.post("/anthropic/conversations/:id/messages", async (req, res) => {
     || TIMEOUT_CONFIG[routeMode as keyof typeof TIMEOUT_CONFIG]
     || 5 * 60 * 1000;
 
-  const [convo] = await db.select().from(conversationsTable).where(eq(conversationsTable.id, conversationId));
+  const convo = await getConversationById(conversationId);
   if (!convo) { res.status(404).json({ error: "Conversation not found" }); return; }
-  const archiveId = convo.archiveId ?? null;
-  const [archive] = archiveId
-    ? await db.select().from(archivesTable).where(eq(archivesTable.id, archiveId))
-    : [null];
-  const [archiveContext] = archiveId
-    ? await db.select().from(archiveContextsTable).where(eq(archiveContextsTable.archiveId, archiveId))
-    : [null];
+  const archiveId = convo.archive_id ?? null;
+  const archive = archiveId ? await getArchiveById(archiveId) : null;
+  const archiveContext = archiveId ? await getArchiveContext(archiveId) : null;
   const archiveTopic = archive?.topic?.trim() || "";
   const archiveSummary = archiveContext?.summary?.trim() || "";
   const combinedSystemPrompt = composeAnthropicSystemPrompt({
@@ -4807,16 +4780,16 @@ router.post("/anthropic/conversations/:id/messages", async (req, res) => {
     userSystemPrompt: rawSystemPrompt,
   });
 
-  const [userMessage] = await db.insert(messagesTable).values({ conversationId, role: "user", content: userContent }).returning();
-  const [assistantMessage] = isResearchRouteMode(routeMode)
-    ? await db.insert(messagesTable).values({
+  const userMessage = await createMessage(conversationId, "user", userContent);
+  const assistantMessage = isResearchRouteMode(routeMode)
+    ? await createMessage(
         conversationId,
-        role: "assistant",
-        content: freshnessResearchMode
+        "assistant",
+        freshnessResearchMode
           ? "Freshness-sensitive research run started. Waiting for live-source output..."
           : "Research run started. Waiting for streamed output...",
-      }).returning()
-    : [undefined as any];
+      )
+    : undefined;
   const requestId = `req_${Date.now().toString(36)}_${randomUUID().slice(0, 8)}`;
   const runId = `run_${Date.now().toString(36)}_${randomUUID().slice(0, 8)}`;
   const runIdentity: ResearchRunIdentity = {
@@ -4831,7 +4804,7 @@ router.post("/anthropic/conversations/:id/messages", async (req, res) => {
     createdAt: new Date().toISOString(),
   };
 
-  const history = await db.select().from(messagesTable).where(eq(messagesTable.conversationId, conversationId)).orderBy(asc(messagesTable.createdAt));
+  const history = await getMessagesByConversationId(conversationId);
   const MAX_HISTORY = 20;
   const trimmedHistory = history.length > MAX_HISTORY
     ? history.slice(history.length - MAX_HISTORY)

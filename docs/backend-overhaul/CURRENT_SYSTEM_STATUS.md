@@ -1,5 +1,19 @@
 # Current System Status
 
+Date: 2026-06-08
+
+## Archive Storage Hotfix
+
+- Archive storage now expects the Supabase schema in `backend/scripts/setup-supabase-archives.sql`.
+- The prior runtime error `PGRST205: Could not find the table 'public.archives' in the schema cache` means the configured Supabase project is missing the archive/chat tables exposed through the Data API.
+- `backend/src/services/anthropic-service.ts` no longer uses stale Drizzle-style `db`, `archivesTable`, `conversationsTable`, or `messagesTable` references. Conversation, message, and archive-context persistence route through `backend/src/db.ts`.
+- API responses for archives, conversations, and messages are mapped from Supabase snake_case rows to the frontend camelCase contract (`archiveId`, `createdAt`, `metadataJson`, `runStatus`).
+- Verification for this hotfix:
+  - `npm.cmd run typecheck --prefix backend`
+  - `node --import tsx --test tests\db.test.ts tests\archives.test.ts` from `backend`
+  - `npm.cmd run build --prefix backend`
+- Remaining deployment step: run `backend/scripts/setup-supabase-archives.sql` in the Supabase SQL Editor, or through a Postgres client using `DATABASE_URL`. This local environment has no `supabase` CLI, no exposed Supabase SQL MCP tool, and no `psql` binary, so the schema was prepared but not applied from Codex.
+
 Date: 2026-05-31
 
 ## What Works Locally

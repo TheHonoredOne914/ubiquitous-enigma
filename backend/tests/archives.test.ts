@@ -2,20 +2,20 @@ import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
 import express, { type Express } from "express";
 
-import { createArchivesRouter, type ArchiveRecord, type ArchivesStore } from "../src/routes/archives.js";
+import { createArchivesRouter, type ApiArchiveRecord, type ArchivesStore } from "../src/routes/archives.js";
 
 type RequestResult = {
   status: number;
   body: unknown;
 };
 
-function createArchiveRecord(overrides: Partial<ArchiveRecord> = {}): ArchiveRecord {
+function createArchiveRecord(overrides: Partial<ApiArchiveRecord> = {}): ApiArchiveRecord {
   return {
     id: 1,
     name: "Archive One",
     topic: "General research topic",
-    createdAt: new Date("2024-01-01T00:00:00.000Z"),
-    updatedAt: new Date("2024-01-01T00:00:00.000Z"),
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
     ...overrides,
   };
 }
@@ -25,6 +25,8 @@ function createStore(overrides: Partial<ArchivesStore> = {}): ArchivesStore {
     listArchives: async () => [],
     createArchive: async (input) => createArchiveRecord(input),
     updateArchive: async (id, input) => createArchiveRecord({ id, ...input }),
+    getResearchAngles: async () => null,
+    setResearchAngles: async (id, angles, meta) => ({ archiveId: id, angles, meta: meta ?? {} }),
     deleteArchiveIfSafe: async () => ({ status: "deleted", archive: createArchiveRecord() }),
     ...overrides,
   };
@@ -75,6 +77,35 @@ async function makeRequest(
 
 afterEach(() => {
   // Express apps are created per-test, so there is no shared state to reset here.
+});
+
+test("lists archives with the frontend camelCase contract", async () => {
+  const store = createStore({
+    listArchives: async () => [
+      createArchiveRecord({
+        id: 7,
+        name: "Federalism",
+        topic: "Fiscal federalism",
+        researchAngles: ["Finance Commission"],
+      }),
+    ],
+  });
+
+  const result = await makeRequest(store, "GET", "/archives");
+
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.body, {
+    archives: [
+      {
+        id: 7,
+        name: "Federalism",
+        topic: "Fiscal federalism",
+        researchAngles: ["Finance Commission"],
+        createdAt: "2024-01-01T00:00:00.000Z",
+        updatedAt: "2024-01-01T00:00:00.000Z",
+      },
+    ],
+  });
 });
 
 test("rejects invalid archive creation payloads", async () => {

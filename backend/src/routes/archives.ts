@@ -11,13 +11,15 @@ import {
   countConversationsByArchiveId,
   getArchiveResearchAngles,
   upsertArchiveResearchAngles,
-  type ArchiveRecord 
+  toApiArchive,
+  type ApiArchiveRecord,
+  type ArchiveRecord
 } from "../db.js";
 import { getGeminiClient, isGeminiEnabled } from "../lib/gemini-client.js";
 
-export type { ArchiveRecord };
+export type { ArchiveRecord, ApiArchiveRecord };
 
-export type ArchiveRecordWithAngles = ArchiveRecord & {
+export type ArchiveRecordWithAngles = ApiArchiveRecord & {
   researchAngles?: string[];
 };
 
@@ -45,8 +47,8 @@ type AnglesMeta = {
 
 export interface ArchivesStore {
   listArchives(): Promise<ArchiveRecordWithAngles[]>;
-  createArchive(input: CreateArchiveInput): Promise<ArchiveRecord>;
-  updateArchive(id: number, input: UpdateArchiveInput): Promise<ArchiveRecord | null>;
+  createArchive(input: CreateArchiveInput): Promise<ApiArchiveRecord>;
+  updateArchive(id: number, input: UpdateArchiveInput): Promise<ApiArchiveRecord | null>;
   getResearchAngles(id: number): Promise<{ archiveId: number; angles: string[]; meta: AnglesMeta } | null>;
   setResearchAngles(id: number, angles: string[], meta?: AnglesMeta): Promise<{ archiveId: number; angles: string[]; meta: AnglesMeta } | null>;
   deleteArchiveIfSafe(id: number): Promise<DeleteArchiveIfSafeResult>;
@@ -156,7 +158,7 @@ const supabaseArchivesStore: ArchivesStore = {
     const anglesPromises = rows.map(async (row) => {
       const anglesData = await getArchiveResearchAngles(row.id);
       return {
-        ...row,
+        ...toApiArchive(row),
         researchAngles: anglesData ? parseJsonArray(anglesData.angles_json) : [],
       };
     });
@@ -167,14 +169,15 @@ const supabaseArchivesStore: ArchivesStore = {
       const archive = await createArchiveDb(input.name, input.topic);
       // Initialize related records
       await upsertArchiveResearchAngles(archive.id, [], {});
-      return archive;
+      return toApiArchive(archive);
     } catch (err) {
       console.error("[archives] createArchive failed:", err);
       throw err;
     }
   },
   async updateArchive(id, input) {
-    return updateArchiveDb(id, input);
+    const updated = await updateArchiveDb(id, input);
+    return updated ? toApiArchive(updated) : null;
   },
   async getResearchAngles(id) {
     const row = await getArchiveResearchAngles(id);
@@ -202,7 +205,7 @@ const supabaseArchivesStore: ArchivesStore = {
     if (conversationCount > 0) return { status: "has_conversations" as const };
 
     await deleteArchive(id);
-    return { status: "deleted" as const, archive: { ...archive, researchAngles: [] } };
+    return { status: "deleted" as const, archive: { ...toApiArchive(archive), researchAngles: [] } };
   },
 };
 
