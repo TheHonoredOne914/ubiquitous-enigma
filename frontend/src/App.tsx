@@ -1,0 +1,56 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ProviderRuntimeProvider } from "@/hooks/use-provider-models";
+import NotFound from "@/pages/not-found";
+import Chat from "@/pages/chat";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,                     // 1 retry max (not 3)
+      retryDelay: 1_000,            // 1 second flat (not exponential)
+      staleTime: 10_000,            // 10s stale time — prevents over-fetching
+      refetchOnWindowFocus: false,  // Don't re-fetch every time user tabs back
+    },
+    mutations: {
+      retry: 0,                     // NEVER retry mutations — prevents duplicate inserts
+    },
+  },
+});
+
+function AnimatedRoutes() {
+  const location = window.location.pathname;
+  const Page = location === "/" || location === "/chat" ? Chat : NotFound;
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location}
+        className="min-h-screen bg-[#0a0a0b] text-[#f0f0f5] font-sans antialiased"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
+        <ProviderRuntimeProvider>
+          <Page />
+        </ProviderRuntimeProvider>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AnimatedRoutes />
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;

@@ -1,0 +1,51 @@
+﻿name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install backend dependencies
+        run: npm ci --prefix backend
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
+
+      - name: Backend typecheck
+        run: npm run typecheck --prefix backend
+
+      - name: Backend tests
+        run: npm test --prefix backend
+
+      - name: Backend build
+        run: npm run build --prefix backend
+
+      - name: Frontend typecheck
+        run: npm run typecheck --prefix frontend
+
+      - name: Frontend tests
+        run: npm test --prefix frontend
+
+      - name: Frontend build
+        run: npm run build --prefix frontend
+
+      - name: Root build
+        run: npm run build
