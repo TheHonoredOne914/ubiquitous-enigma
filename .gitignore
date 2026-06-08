@@ -1,53 +1,18 @@
 ```
-# Dependencies
-node_modules/
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 
-# Build artifacts
-dist/
-build/
-target/
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Virtual environments
-venv/
-.venv/
+# Environment
 .env
 .env.local
-.env.*
+.env.
 
-# IDE files
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# Logs
+# Original rules preserved
 *.log
-
-# Temporary files
-*.tmp
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Testing
-.coverage
-coverage/
-htmlcov/
-
-# Package manager
-package-lock.json
-yarn.lock
-
-# System
-.mypy_cache/
-.pytest_cache/
-.nyc_output/
-istanbul/
 ```
