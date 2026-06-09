@@ -262,15 +262,24 @@ export function ChatArea({
     { query: { enabled: !!conversationId, queryKey: conversationId != null ? getGetAnthropicConversationQueryKey(conversationId) : ["anthropic", "conversations", "disabled"] } }
   );
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({ 
+          top: scrollRef.current.scrollHeight, 
+          behavior: "smooth" 
+        });
+      }, 10);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [conversation?.messages, streamingContent, currentSearch]);
+    const timerId = requestAnimationFrame(() => {
+      scrollToBottom();
+    });
+    return () => cancelAnimationFrame(timerId);
+  }, [conversation?.messages, streamingContent, currentSearch, isStreaming]);
 
   // Track scroll position for floating scroll-to-bottom button
   useEffect(() => {
