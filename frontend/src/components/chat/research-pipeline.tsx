@@ -149,7 +149,7 @@ function DivisionProgressTracker({
   const completed = new Map(completedDivisions.map((division) => [division.id, division]));
 
   return (
-    <section className="mx-4 mb-3 rounded-xl border border-slate-300/40 bg-background/95 p-3 shadow-sm">
+    <section className="mx-4 mb-3 rounded-xl border border-slate-300/40 bg-background/95 p-3 shadow-sm animate-pipeline-card-in">
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="text-[11px] font-semibold text-foreground">Division Progress</p>
         <span className="font-mono text-[10px] text-muted-foreground">{completed.size}/11 complete</span>
@@ -162,13 +162,14 @@ function DivisionProgressTracker({
             <div
               key={id}
               className={cn(
-                "flex min-h-9 items-center justify-between gap-2 rounded-lg border px-2 py-1.5",
+                "flex min-h-9 items-center justify-between gap-2 rounded-lg border px-2 py-1.5 transition-all duration-300",
                 done
-                  ? "border-green-500/30 bg-green-500/10"
+                  ? "border-green-500/30 bg-green-500/10 hover:shadow-md"
                   : active
-                    ? "border-[#3b6fd4]/40 bg-[#3b6fd4]/10"
+                    ? "border-[#3b6fd4]/40 bg-[#3b6fd4]/10 animate-pipeline-glow"
                     : "border-slate-300/30 bg-slate-500/5"
               )}
+              style={{ animationDelay: `${index * 40}ms` }}
             >
               <div className="min-w-0">
                 <p className="truncate text-[11px] font-medium text-foreground">{index + 1}. {label}</p>
@@ -179,7 +180,7 @@ function DivisionProgressTracker({
                 )}
               </div>
               {active && <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-[#6f93e8]" />}
-              {done && <span className="h-2 w-2 shrink-0 rounded-full bg-green-500" />}
+              {done && <span className="h-2 w-2 shrink-0 rounded-full bg-green-500 animate-pulse" />}
             </div>
           );
         })}
@@ -1023,13 +1024,16 @@ export function ResearchPipeline({
   const snapshot = buildSnapshot(activeModels, customModelFound);
 
   return (
-    <div className="w-full rounded-2xl border border-border/50 bg-background/95 shadow-sm overflow-hidden mb-6">
+    <div className="w-full rounded-2xl border border-border/50 bg-background/95 shadow-sm overflow-hidden mb-6 animate-pipeline-card-in">
 
       {/* ── Phase header bar ───────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border/30 bg-muted/30">
+      <div className={cn(
+        "flex items-center justify-between px-4 py-3 border-b border-border/30 bg-muted/30",
+        phase !== "complete" && phase !== "error" && "animate-pipeline-glow"
+      )}>
         <div className="flex items-center gap-2.5">
           {phase !== "complete" && phase !== "error"
-            ? <div className="h-2 w-2 animate-pulse rounded-full bg-[#3b6fd4]" />
+            ? <div className="h-2 w-2 animate-pulse rounded-full bg-[#3b6fd4] animate-pipeline-float" />
             : <div className={cn("w-2 h-2 rounded-full", terminalDotClass)} />}
           <span className="text-xs font-semibold tracking-wide text-foreground/80 uppercase">
             {currentPhaseLabel}
@@ -1038,7 +1042,7 @@ export function ResearchPipeline({
         {phase !== "complete" && phase !== "error" && (
           <div className="flex gap-0.5">
             {[0, 0.15, 0.3].map(d => (
-              <div key={d} className="h-3 w-1 animate-bounce rounded-full bg-[#6f93e8]" style={{ animationDelay: `${d}s` }} />
+              <div key={d} className="h-3 w-1 animate-bounce rounded-full bg-[#6f93e8] animate-badge-float" style={{ animationDelay: `${d}s` }} />
             ))}
           </div>
         )}
@@ -1083,12 +1087,12 @@ export function ResearchPipeline({
 
       {/* ── Fetching Progress Bar ──────────────────────────────────────────── */}
       {fetchingTotal > 0 && phase !== "complete" && (
-        <div className="px-4 py-2 border-b bg-slate-50/50 dark:bg-slate-900/30 flex items-center gap-2 text-[10px]">
+        <div className="px-4 py-2 border-b bg-slate-50/50 dark:bg-slate-900/30 flex items-center gap-2 text-[10px] relative overflow-hidden">
           <Download className="w-3 h-3 text-blue-500 animate-pulse" />
           <span className="font-medium text-foreground">Fetching {fetchedCount}/{fetchingTotal} pages</span>
-          <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">
+          <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden relative">
             <div
-              className="h-full bg-[#3b6fd4] transition-all duration-500"
+              className="h-full bg-[#3b6fd4] transition-all duration-500 animate-progress-shimmer"
               style={{ width: `${Math.round((fetchedCount / fetchingTotal) * 100)}%` }}
             />
           </div>
@@ -1146,13 +1150,14 @@ export function ResearchPipeline({
           return (
             <div
               key={key}
-              className="flex flex-col gap-2 rounded-xl border border-border/40 bg-background/60 p-3 backdrop-blur-sm transition-colors hover:border-[#3b6fd4]/30"
+              className="flex flex-col gap-2 rounded-xl border border-border/40 bg-background/60 p-3 backdrop-blur-sm transition-all duration-500 hover:border-[#3b6fd4]/30 animate-pipeline-card-in hover:shadow-md"
+              style={{ animationDelay: `${idx * 80}ms` }}
             >
               <div className="flex items-center justify-between gap-1">
                 <span className="text-[10px] font-semibold text-muted-foreground truncate max-w-[90px]">
                   {meta.label}
                 </span>
-                <span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded-full border", persona.color)}>
+                <span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded-full border animate-badge-float", persona.color)}>
                   {persona.emoji} {persona.label}
                 </span>
               </div>
@@ -1169,11 +1174,11 @@ export function ResearchPipeline({
                   {percent}%
                 </span>
               </div>
-              <div className="w-full h-1 rounded-full bg-muted overflow-hidden">
+              <div className="w-full h-1 rounded-full bg-muted overflow-hidden relative">
                 <div
                   className={cn(
                     "h-full rounded-full transition-all duration-700",
-                    status === "searching" && "bg-[#3b6fd4]",
+                    status === "searching" && "bg-[#3b6fd4] animate-pipeline-shimmer",
                     status === "reading"   && "bg-[#3b6fd4]",
                     status === "done"      && "bg-emerald-500",
                     status === "warning"   && "bg-amber-500",
