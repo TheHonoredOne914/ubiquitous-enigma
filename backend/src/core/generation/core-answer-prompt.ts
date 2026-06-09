@@ -26,8 +26,10 @@ export function buildCoreAnswerSystemPrompt(input: CoreResearchAnswerInput): str
   const dimensionFocus = input.dimensionWeights?.primaryDimensions?.length
     ? `Primary dimension focus: ${input.dimensionWeights.primaryDimensions.map((dimension) => `${dimension.name} (${dimension.boostedScore})`).join(", ")}.`
     : "Primary dimension focus: infer from the AgendaContract without inventing facts.";
-  const hasLegalSources = input.evidenceRegistry.getSourcesByClass("court_primary").length > 0
-    || input.evidenceRegistry.getSourcesByClass("legal_commentary").length > 0;
+  const hasLegalSources = typeof input.evidenceRegistry?.getSourcesByClass === "function"
+    ? (input.evidenceRegistry.getSourcesByClass("court_primary").length > 0
+       || input.evidenceRegistry.getSourcesByClass("legal_commentary").length > 0)
+    : false;
   return [
     "You are BestDel's thesis-level Indian Mock Parliament research generator.",
     committeePrompt,
