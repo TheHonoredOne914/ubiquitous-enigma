@@ -975,13 +975,13 @@ export function ChatArea({
           })()}
 
           {isStreaming && chatType === "research" && currentMode === "council" && (
-            <div className="mx-auto max-w-5xl px-3 pl-9 md:px-4 md:pl-12">
+            <div className="mx-auto max-w-5xl px-3 pl-9 md:px-4 md:pl-12 animate-bubble-in">
               <CouncilChamberPanel session={pipeline.councilSession} />
             </div>
           )}
 
           {isStreaming && chatType === "research" && currentMode !== "normal" && currentMode !== "council" && (
-            <div className="mx-auto max-w-5xl px-3 pl-9 md:px-4 md:pl-12">
+            <div className="mx-auto max-w-5xl px-3 pl-9 md:px-4 md:pl-12 animate-bubble-in">
               <ResearchPipeline
                 mode={currentMode as Exclude<ChatMode, "council">}
                 modelConfig="standard"
@@ -1046,7 +1046,7 @@ export function ChatArea({
           )}
 
           {isStreaming && chatType === "research" && currentMode === "normal" && (
-            <div className="mx-auto flex max-w-5xl flex-row gap-2 px-3 md:gap-3 md:px-4" data-testid="message-streaming">
+            <div className="mx-auto flex max-w-5xl flex-row gap-2 px-3 animate-bubble-in md:gap-3 md:px-4" data-testid="message-streaming">
               <div className="w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shrink-0 bg-muted text-muted-foreground mt-1 animate-pulse-soft">
                 <Bot className="w-4 h-4 md:w-5 md:h-5" />
               </div>
