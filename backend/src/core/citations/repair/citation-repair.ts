@@ -37,7 +37,9 @@ export function repairCitations(
 
   // Iterate backwards to replace without messing up indices
   for (let i = citationsToReplace.length - 1; i >= 0; i--) {
-    const { full, id, index, sentence } = citationsToReplace[i] as any;
+    const citation = citationsToReplace[i];
+    if (!citation) continue;
+    const { full, id, index, sentence } = citation;
     
     // Check if the source is eligible
     if (!isSourceEligibleForCitation(id, context)) {

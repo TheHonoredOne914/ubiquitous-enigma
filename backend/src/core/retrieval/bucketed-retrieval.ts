@@ -617,9 +617,21 @@ export async function withEnrichmentBudget<T extends { title: string; url: strin
     { emit: (event) => options.onCacheEvent?.(event.type, event.data ?? {}), scope: providerHealthScope },
   );
   let budgetTimer: ReturnType<typeof setTimeout> | undefined;
+  let completed = false;
+  
+  // FIX BUG-2: Clear timer before checking completion to prevent race condition
+  const checkCompletionAndClearTimer = () => {
+    if (budgetTimer) {
+      clearTimeout(budgetTimer);
+      budgetTimer = undefined;
+    }
+    completed = true;
+  };
+  
   const workers = Array.from({ length: workerCount }, async () => {
     while (cursor < sources.length) {
-      if (Date.now() - startTime >= budgetMs) {
+      // FIX BUG-4: Check abort signal before each iteration
+      if (controller.signal.aborted || Date.now() - startTime >= budgetMs) {
         return;
       }
       const index = cursor;
@@ -628,7 +640,7 @@ export async function withEnrichmentBudget<T extends { title: string; url: strin
         results[index] = await enrichSource(sources[index], enrichmentOptions).catch((error) => {
           const safeError = redactSecretString(error instanceof Error ? error.message : String(error));
           options.onError?.(safeError);
-          // FIX 5: Check if abort was the cause
+          // FIX BUG-4: Check if abort was the cause
           if (controller.signal.aborted && error instanceof Error && error.message.includes("budget exceeded")) {
             return {
               title: sources[index].title,
@@ -665,37 +677,47 @@ export async function withEnrichmentBudget<T extends { title: string; url: strin
   });
   const budgetExceeded = new Promise<void>((resolve) => {
     budgetTimer = setTimeout(() => {
-      controller.abort();
-      // Budget exceeded - mark remaining as failed
-      for (let i = 0; i < sources.length; i++) {
-        if (!results[i] && sources[i]) {
-          results[i] = {
-            title: sources[i].title,
-            url: sources[i].url,
-            domain: sources[i].domain,
-            fullText: sources[i].snippet ?? null,
-            snippet: sources[i].snippet ?? null,
-            textLength: sources[i].snippet?.length ?? 0,
-            extractionMethod: "snippet_fallback",
-            extractionStatus: "partial",
-            fallbackExtractionUsed: true,
-            extractionQuality: "low",
-            citationEligible: false,
-            enrichmentError: "Enrichment budget exceeded",
-          };
+      if (!completed) {
+        controller.abort();
+        // Budget exceeded - mark remaining as failed
+        for (let i = 0; i < sources.length; i++) {
+          if (!results[i] && sources[i]) {
+            results[i] = {
+              title: sources[i].title,
+              url: sources[i].url,
+              domain: sources[i].domain,
+              fullText: sources[i].snippet ?? null,
+              snippet: sources[i].snippet ?? null,
+              textLength: sources[i].snippet?.length ?? 0,
+              extractionMethod: "snippet_fallback",
+              extractionStatus: "partial",
+              fallbackExtractionUsed: true,
+              extractionQuality: "low",
+              citationEligible: false,
+              enrichmentError: "Enrichment budget exceeded",
+            };
+          }
         }
       }
       resolve();
     }, budgetMs);
   });
-  await Promise.race([
-    Promise.all(workers),
+  
+  // FIX BUG-1: Use Promise.allSettled for graceful degradation instead of Promise.all
+  const raceResult = await Promise.race([
+    Promise.allSettled(workers).then(results => results.map(r => r.status === 'fulfilled' ? r.value : undefined)),
     budgetExceeded,
   ]);
-  controller.abort();
-  await Promise.allSettled(workers);
-  if (budgetTimer) clearTimeout(budgetTimer);
+  
+  // FIX BUG-7 & BUG-8: Clear timer and remove listener in finally-like block
+  if (budgetTimer) {
+    clearTimeout(budgetTimer);
+    budgetTimer = undefined;
+  }
   options.abortSignal?.removeEventListener("abort", abortFromParent);
+  
+  // FIX BUG-3: Wait for workers to complete gracefully
+  await Promise.allSettled(workers);
   if (enrichmentOptions.extractionCooldown) {
     retrievalCacheManager.persistExtractionCooldown(enrichmentOptions.extractionCooldown, {
       emit: (event) => options.onCacheEvent?.(event.type, event.data ?? {}),

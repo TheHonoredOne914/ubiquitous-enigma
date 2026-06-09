@@ -52,5 +52,13 @@ export function isSourceEligibleForCitation(
     console.log(`[repair] Source ${sourceId} ineligible: not in ClaimGraph, ClaimLedger, or EvidencePacks`);
     return false;
   }
+  
+  // FIX BUG-47: Additional check for explicit citationCreditEligible flag if present on EvidenceSource
+  const sourceWithCredit = source as EvidenceSource & { citationCreditEligible?: boolean };
+  if (sourceWithCredit.citationCreditEligible === false) {
+    console.log(`[repair] Source ${sourceId} ineligible: citationCreditEligible is false`);
+    return false;
+  }
+  
   return true;
 }
