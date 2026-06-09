@@ -383,11 +383,18 @@ async function runLimited<T>(tasks: Array<() => Promise<T>>, concurrency: number
     while (nextIndex < tasks.length) {
       const index = nextIndex;
       nextIndex += 1;
-      results[index] = await tasks[index]();
+      try {
+        results[index] = await tasks[index]();
+      } catch (error) {
+        // FIX BUG-1: Handle individual task failures gracefully instead of failing entire batch
+        console.warn(`Task ${index} failed, continuing with remaining tasks`, error);
+        results[index] = undefined as T;
+      }
     }
   });
-  await Promise.all(workers);
-  return results;
+  // FIX BUG-1: Use Promise.allSettled for graceful degradation
+  await Promise.allSettled(workers);
+  return results.filter(r => r !== undefined);
 }
 
 async function safeResponseText(response: Response): Promise<string> {
