@@ -646,10 +646,10 @@
   }
 
   /* Bubble entrance — direction set per side */
-  .animate-bubble-in { animation: slideInLeft 280ms var(--ease-out-expo) both; }
+  .animate-bubble-in { animation: slideInLeft 240ms var(--ease-out-expo) both; }
   .flex-row-reverse > .animate-bubble-in,
-  .animate-bubble-in.from-right { animation: slideInRight 280ms var(--ease-out-expo) both; }
-  .flex-row-reverse.animate-bubble-in { animation: slideInRight 280ms var(--ease-out-expo) both; }
+  .animate-bubble-in.from-right { animation: slideInRight 240ms var(--ease-out-expo) both; }
+  .flex-row-reverse.animate-bubble-in { animation: slideInRight 240ms var(--ease-out-expo) both; }
 
   .animate-pulse-soft {
     animation: pulse-soft 1.6s ease-in-out infinite;
@@ -659,7 +659,7 @@
     animation: none;
   }
   .stream-chunk {
-    animation: chunk-fade-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: chunk-fade-in 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   .stream-chunk > :first-child {
     margin-top: 0;
@@ -670,7 +670,7 @@
 }
 
 @keyframes chunk-fade-in {
-  from { opacity: 0; transform: translateY(6px); filter: blur(4px); }
+  from { opacity: 0; transform: translateY(4px); filter: blur(2px); }
   to   { opacity: 1; transform: translateY(0);  filter: blur(0); }
 }
 
@@ -809,11 +809,11 @@ html { scroll-behavior: smooth; }
 
 /* Message slide entrances */
 @keyframes slideInLeft {
-  from { opacity: 0; transform: translate(-16px, 12px); }
+  from { opacity: 0; transform: translate(-12px, 8px); }
   to   { opacity: 1; transform: translate(0, 0); }
 }
 @keyframes slideInRight {
-  from { opacity: 0; transform: translate(16px, 12px); }
+  from { opacity: 0; transform: translate(12px, 8px); }
   to   { opacity: 1; transform: translate(0, 0); }
 }
 
