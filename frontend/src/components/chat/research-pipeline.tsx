@@ -24,6 +24,7 @@ import { QwenThinking } from "./qwen-thinking";
 import { StreamingText } from "./streaming-text";
 import { DimensionDisplay } from "./dimension-display";
 import { cleanMessageContent, prepareMessageForCopy } from "./chat-message-list";
+import { ThoughtBlock, extractThinking } from "./thought-block";
 import {
   getStatusSemantics,
   PromptBudgetPanel,
@@ -348,21 +349,6 @@ function pipelineCheckDotClass(type: string): string {
     return "bg-emerald-500";
   }
   return "bg-slate-400";
-}
-
-// Filter out internal backend events that shouldn't be shown to users
-function isUserVisibleEvent(type: string): boolean {
-  const hiddenEvents = [
-    "retrieval_cache_write",
-    "retrieval_cache_miss",
-    "provider_cooldown_active",
-    "provider_cooldown_extended",
-    "extraction_provider_call",
-    "search_provider_call",
-    "latency_stage_started",
-    "latency_stage_completed",
-  ];
-  return !hiddenEvents.some(hidden => type.includes(hidden));
 }
 
 function DataSnapshot({ snapshot }: { snapshot: SnapshotData }) {
@@ -1525,11 +1511,21 @@ export function ResearchPipeline({
             )}
           </div>
           <div className="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed">
-            {phase === "complete" ? (
-              <div className="whitespace-pre-wrap break-words">{visibleAnswer}</div>
-            ) : (
-              <StreamingText content={visibleAnswer} isStreaming />
-            )}
+            {(() => {
+              const { thinking, mainContent: cleanMain, isThinkingFinished } = extractThinking(visibleAnswer);
+              return (
+                <>
+                  {thinking && <ThoughtBlock thinking={thinking} isThinkingFinished={isThinkingFinished} />}
+                  {cleanMain && (
+                    phase === "complete" ? (
+                      <div className="whitespace-pre-wrap break-words">{cleanMain}</div>
+                    ) : (
+                      <StreamingText content={cleanMain} isStreaming />
+                    )
+                  )}
+                </>
+              );
+            })()}
           </div>
           {/* Fix (Bug L1476): only blink cursor while actively streaming, not after */}
           {phase !== "complete" && (

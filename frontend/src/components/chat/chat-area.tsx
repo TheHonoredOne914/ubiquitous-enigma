@@ -26,6 +26,7 @@ import { useProviderModels } from "@/hooks/use-provider-models";
 import { apiFetch } from "@/lib/api-fetch";
 import { StreamingText } from "./streaming-text";
 import { ThinkingIndicator } from "./thinking-indicator";
+import { ThoughtBlock, extractThinking } from "./thought-block";
 import { ResearchPipeline } from "./research-pipeline";
 import { CouncilChamberPanel } from "@/components/council/council-chamber-panel";
 import { PersistedPipeline, extractPipelineMeta } from "./persisted-pipeline";
@@ -1053,13 +1054,24 @@ export function ChatArea({
               <div className="flex w-full max-w-[85ch] flex-col gap-2">
                 <div className="assistant-bubble w-full rounded-[22px] px-5 py-4 text-[#f0f0f5] transition-all duration-200">
                   <div className="prose prose-sm max-w-none text-[#f0f0f5] dark:prose-invert">
-                    {streamingContent && currentMode === "normal" ? (
-                      <div className={cn(isStreaming && !isComplete && "stream-cursor")}>
-                        <StreamingText content={streamingContent} isStreaming={isStreaming && !isComplete} />
-                      </div>
-                    ) : (
-                      <ThinkingIndicator mode="normal" />
-                    )}
+                    {(() => {
+                      if (!streamingContent) {
+                        return <ThinkingIndicator mode="normal" />;
+                      }
+                      const { thinking, mainContent: cleanMain, isThinkingFinished } = extractThinking(streamingContent);
+                      return (
+                        <>
+                          {thinking && <ThoughtBlock thinking={thinking} isThinkingFinished={isThinkingFinished} />}
+                          {cleanMain ? (
+                            <div className={cn(isStreaming && !isComplete && "stream-cursor")}>
+                              <StreamingText content={cleanMain} isStreaming={isStreaming && !isComplete} />
+                            </div>
+                          ) : isThinkingFinished ? (
+                            <ThinkingIndicator mode="normal" />
+                          ) : null}
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
@@ -1091,13 +1103,24 @@ export function ChatArea({
                     : "bg-muted"
                 )}>
                   <div className={cn("prose dark:prose-invert max-w-none whitespace-pre-wrap", rhetoricsType === "kavita" ? "text-base leading-loose" : "text-sm")}>
-                    {pipeline.streamingContent ? (
-                      <div className={cn(isStreaming && !isComplete && "stream-cursor")}>
-                        <StreamingText content={pipeline.streamingContent} isStreaming={isStreaming && !isComplete} />
-                      </div>
-                    ) : (
-                      <ThinkingIndicator mode="rhetorics" rhetoricsType={rhetoricsType} />
-                    )}
+                    {(() => {
+                      if (!pipeline.streamingContent) {
+                        return <ThinkingIndicator mode="rhetorics" rhetoricsType={rhetoricsType} />;
+                      }
+                      const { thinking, mainContent: cleanMain, isThinkingFinished } = extractThinking(pipeline.streamingContent);
+                      return (
+                        <>
+                          {thinking && <ThoughtBlock thinking={thinking} isThinkingFinished={isThinkingFinished} />}
+                          {cleanMain ? (
+                            <div className={cn(isStreaming && !isComplete && "stream-cursor")}>
+                              <StreamingText content={cleanMain} isStreaming={isStreaming && !isComplete} />
+                            </div>
+                          ) : isThinkingFinished ? (
+                            <ThinkingIndicator mode="rhetorics" rhetoricsType={rhetoricsType} />
+                          ) : null}
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>

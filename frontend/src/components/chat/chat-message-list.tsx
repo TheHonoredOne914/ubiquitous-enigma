@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { sanitizeUrl, stripRawSourceJson } from "./chat-metadata-utils";
 import { stripPipelineMetadata, type PipelineMetadata } from "@/lib/pipeline-metadata";
+import { ThoughtBlock, extractThinking } from "./thought-block";
 
 export interface CitationMessageSource {
   sourceId?: number;
@@ -25,7 +26,9 @@ export function cleanMessageContent(content: string): string {
 }
 
 export function prepareMessageForCopy(content: string): string {
-  return cleanMessageContent(content)
+  // Strip <think> blocks so only the main response is copied
+  const { mainContent } = extractThinking(content);
+  return cleanMessageContent(mainContent)
     // Preserve code block content but remove fences — keep line breaks (Bug: L21)
     .replace(/```[\w]*\n?([\s\S]*?)```/g, (_, code) => code)
     .replace(/`([^`]+)`/g, "$1")
@@ -121,7 +124,9 @@ export function CitationMessage({
   sources?: CitationMessageSource[];
   citationStatus?: PipelineMetadata["citationStatus"] | null;
 }) {
-  const safeContent = cleanMessageContent(content);
+  // Extract <think> blocks before cleaning so we can render them as a collapsible ThoughtBlock
+  const { thinking, mainContent: contentWithoutThinking, isThinkingFinished } = extractThinking(content);
+  const safeContent = cleanMessageContent(contentWithoutThinking);
   // Fix: handle leading whitespace before ## Sources (Bug: L41)
   const sourcesMatch = safeContent.match(/^[ \t]*##[ \t]*Sources?[ \t]*\n([\s\S]*?)(?=^[ \t]*##[ \t]|\s*$)/im);
   const sourcesBlock = sourcesMatch ? sourcesMatch[1] : null;
@@ -139,6 +144,7 @@ export function CitationMessage({
 
   return (
     <div className="prose prose-sm max-w-none text-[#eeeef5] dark:prose-invert">
+      {thinking && <ThoughtBlock thinking={thinking} isThinkingFinished={isThinkingFinished} />}
       <div className="whitespace-pre-wrap break-words text-sm leading-relaxed [overflow-wrap:anywhere] md:text-[15px]">
         {renderedContent.map((part, i) =>
           part.type === "source" && part.url ? (
