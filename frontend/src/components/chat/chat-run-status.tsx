@@ -84,10 +84,53 @@ export function summarizeResearchRunSidebar(input: ResearchRunSidebarSummaryInpu
 
   const citedIds = new Set(input.citationStatus?.citedSourceIds ?? []);
 
-  // Fix (Bug: L56): only reverse once — do not double-reverse
+  // Fix (Bug: stale UI - filter out internal/backend events from user-facing display)
+  // Only show meaningful pipeline events, not cache/retrieval debug logs
+  const USER_FACING_EVENTS = new Set([
+    "source_contract_built",
+    "quality_gate_passed",
+    "quality_gate_failed",
+    "citation_status_complete",
+    "evidence_registry_created",
+    "archive_routing_complete",
+    "research_angles_pinned",
+    "prompt_budget_optimized",
+    "provider_fallback_used",
+    "legacy_fallback_used",
+  ]);
+  
   const latestEvents = input.corePipelineEvents
-    .slice(-4)
-    .map((event) => event.type.replace(/_/g, " "));
+    .slice(-6)
+    .filter((event) => {
+      // Show only user-facing events, hide internal cache/retrieval debug events
+      if (USER_FACING_EVENTS.has(event.type)) return true;
+      // Also show events with important data payloads
+      if (event.data && Object.keys(event.data).length > 0) {
+        const hasImportantData = Object.keys(event.data).some(key => 
+          key.includes("budget") || key.includes("quality") || key.includes("gap") || key.includes("contract")
+        );
+        return hasImportantData;
+      }
+      return false;
+    })
+    .map((event) => {
+      // Format event type in a user-friendly way
+      const friendlyName = event.type
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase());
+      
+      // Add relevant data summary if available
+      if (event.data) {
+        if (event.data.promptBudgetReport) {
+          const report = event.data.promptBudgetReport as any;
+          if (report.finalTokens) return `${friendlyName}: ${Math.round(report.finalTokens)} tokens`;
+        }
+        if (event.data.qualityScore) {
+          return `${friendlyName}: ${(event.data.qualityScore as number).toFixed(2)}`;
+        }
+      }
+      return friendlyName;
+    });
 
   return {
     archiveName: input.activeArchiveName || "Active Research",
