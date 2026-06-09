@@ -1,4 +1,4 @@
-```gitignore
+```
 # Dependencies
 node_modules/
 
@@ -6,55 +6,55 @@ node_modules/
 dist/
 build/
 *.js.map
-*.ts.map
-*.jsx.map
-*.tsx.map
+*.tsbuildinfo
 
 # Environment variables
 .env
 .env.local
-.env.*
+*.env.*
 
 # Logs
 *.log
+
+# Coverage reports
+coverage/
+htmlcov/
+*.coverage
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # OS generated files
 .DS_Store
 Thumbs.db
 
-# Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
-
-# Python
+# Python specific
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
 *.so
+*.egg-info/
+.eggs/
 .coverage
-htmlcov/
-.coverage.*
+.tox/
 .pytest_cache/
 .mypy_cache/
+.hypothesis/
 
-# Node.js
+# Node.js specific
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Compiled and binary files
-*.exe
-*.dll
-*.so
-*.a
-*.o
-*.out
-*.class
+# Temporary files
+*.tmp
+*.temp
+*.bak
 
 # Compressed files
 *.zip
@@ -80,6 +80,16 @@ yarn-error.log*
 *.tar.xz
 *.tar.zst
 
-# Coverage directory used by tools like Istanbul
-coverage/
+# Distribution / packaging
+*.egg
+*.tar.gz
+*.whl
+
+# Testing
+.jest/
+.nyc_output/
+
+# Security
+secrets/
+credentials.json
 ```
