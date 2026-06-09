@@ -350,6 +350,21 @@ function pipelineCheckDotClass(type: string): string {
   return "bg-slate-400";
 }
 
+// Filter out internal backend events that shouldn't be shown to users
+function isUserVisibleEvent(type: string): boolean {
+  const hiddenEvents = [
+    "retrieval_cache_write",
+    "retrieval_cache_miss",
+    "provider_cooldown_active",
+    "provider_cooldown_extended",
+    "extraction_provider_call",
+    "search_provider_call",
+    "latency_stage_started",
+    "latency_stage_completed",
+  ];
+  return !hiddenEvents.some(hidden => type.includes(hidden));
+}
+
 function DataSnapshot({ snapshot }: { snapshot: SnapshotData }) {
   const [open, setOpen] = useState(() => typeof window === "undefined" || window.innerWidth >= 768);
   const { govCount, courtCount, intlCount, mediaCount, total } = snapshot;

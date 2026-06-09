@@ -7,14 +7,17 @@ interface RetrievalCachePanelProps {
 
 export function RetrievalCachePanel({ events = [] }: RetrievalCachePanelProps) {
   const stats = collectRetrievalCacheStats(events);
-  if (stats.summaries.length === 0 && stats.cooldowns.length === 0 && stats.warnings.length === 0) return null;
+  
+  // Only show panel if there are actual cache hits/misses to report
+  // Hide internal details like cooldowns and warnings - those are backend logs only
+  if (stats.totalHits === 0 && stats.totalMisses === 0) return null;
 
   return (
     <div className="rounded-lg border border-border/40 bg-background/70 p-2.5">
       <div className="flex items-center justify-between gap-2">
         <p className="text-[10px] font-semibold text-muted-foreground">Retrieval Cache</p>
         <p className="text-[10px] text-muted-foreground">
-          {stats.totalHits} hit / {stats.totalMisses} miss{stats.totalNegativeHits ? ` / ${stats.totalNegativeHits} negative` : ""}
+          {stats.totalHits} hit / {stats.totalMisses} miss
         </p>
       </div>
       {stats.summaries.length > 0 && (
@@ -22,21 +25,11 @@ export function RetrievalCachePanel({ events = [] }: RetrievalCachePanelProps) {
           {stats.summaries.slice(0, 6).map((summary) => (
             <p key={summary.layer} className="truncate text-[10px] text-muted-foreground">
               {summary.layer.replace(/_/g, " ")}: {summary.hits}/{summary.misses}
-              {summary.negativeHits ? ` n${summary.negativeHits}` : ""}
             </p>
           ))}
         </div>
       )}
-      {stats.cooldowns.length > 0 && (
-        <p className="mt-1 line-clamp-2 text-[10px] text-amber-700 dark:text-amber-300">
-          Cooldown: {stats.cooldowns.join("; ")}
-        </p>
-      )}
-      {stats.warnings.length > 0 && (
-        <p className="mt-1 line-clamp-2 text-[10px] text-red-700 dark:text-red-300">
-          {stats.warnings.join("; ")}
-        </p>
-      )}
+      {/* Removed cooldown and warning displays - these are internal backend logs */}
     </div>
   );
 }
